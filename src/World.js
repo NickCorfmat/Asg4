@@ -24,7 +24,7 @@ var FSHADER_SOURCE = `
       if (u_whichTexture == -2) {
         gl_FragColor = u_FragColor;                   // Use Color
       } else if (u_whichTexture == -1) {
-       gl_FragColor = vec4(v_UV, 1.0, 1.0)            // Use UV debug color
+       gl_FragColor = vec4(v_UV, 1.0, 1.0);            // Use UV debug color
       } else if (u_whichTexture == 0) {
         gl_FragColor = texture2D(u_Sampler0, v_UV);   // Use texture0
       } else {
@@ -44,6 +44,7 @@ let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
 let u_Sampler0;
+let u_whichTexture;
 
 let rotateSensitivity = 0.25;
 let g_globalAngleX = 0;
@@ -124,6 +125,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
+  if (!u_whichTexture) {
+    console.log("Failed to get the storage location of u_whichTexture.");
+    return;
+  }
+
   // Set an initial value for this matrix to identity
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
@@ -194,7 +201,7 @@ function sendTextureToGLSL(image) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  gl.uniform1i(u_Sampler, 0);
+  gl.uniform1i(u_Sampler0, 0);
 
   console.log("finished laodTexture");
 }
@@ -207,7 +214,7 @@ function main() {
   // Set up action for the HTML UI elements
   addActionsForHtmlUI();
 
-  //initTextures();
+  initTextures();
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
@@ -263,9 +270,13 @@ function renderScene() {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  let M = new Matrix4();
-  M.setTranslate(-0.5, -0.5, -0.5);
-  drawCube(M, [1, 1, 1, 1]);
+  var body = new Cube();
+  body.color = [1.0, 0.0, 0.0, 1.0];
+  body.textureNum = 0;
+  body.matrix.translate(-0.25, -0.75, 0.0);
+  body.matrix.rotate(-5, 1, 0, 0);
+  body.matrix.scale(0.5, 0.3, 0.5);
+  body.render();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
