@@ -52,9 +52,7 @@ let g_globalAngleX = 0;
 let g_globalAngleY = 0;
 
 // camera settings
-var g_eye = [0, 0, 3];
-var g_at = [0, 0, -100];
-var g_up = [0, 1, 0];
+let g_camera = new Camera();
 
 // diagnostics
 var g_startTime = performance.now() / 1000.0;
@@ -212,7 +210,7 @@ function sendTextureToGLSL(image) {
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
   gl.uniform1i(u_Sampler0, 0);
 
-  console.log("finished laodTexture");
+  console.log("finished loadTexture");
 }
 
 function main() {
@@ -258,10 +256,10 @@ function convertCoordinatesEventToGL(ev) {
 function keydown(ev) {
   if (ev.keyCode == 39) {
     // Right arrow
-    g_eye[0] += 0.2;
+    g_camera.eye.x += 0.2;
   } else if (ev.keyCode == 37) {
     // Left arrow
-    g_eye[0] -= 0.2;
+    g_camera.eye.x -= 0.2;
   }
 
   renderScene();
@@ -279,15 +277,9 @@ function renderScene() {
   // Pass the view matrix
   var viewMat = new Matrix4();
   viewMat.setLookAt(
-    g_eye[0],
-    g_eye[1],
-    g_eye[2],
-    g_at[0],
-    g_at[1],
-    g_at[2],
-    g_up[0],
-    g_up[1],
-    g_up[2]
+    g_camera.eye.x, g_camera.eye.y, g_camera.eye.z,
+    g_camera.at.x, g_camera.at.y, g_camera.at.z,
+    g_camera.up.x, g_camera.up.y, g_camera.up.z,
   );
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
@@ -302,6 +294,15 @@ function renderScene() {
 
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  // world ground
+  var ground = new Cube();
+  ground.color = [1.0, 0.0, 0.0, 1.0]
+  ground.textureNum = 0;
+  ground.matrix.translate(0, -0.75, 0);
+  ground.matrix.scale(10, 0, 10);
+  ground.matrix.translate(-0.5, 0, -0.5);
+  ground.render();
 
   var body = new Cube();
   body.color = [1.0, 0.0, 0.0, 1.0];
