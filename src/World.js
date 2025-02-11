@@ -46,10 +46,17 @@ let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
+// global rotation settings
 let rotateSensitivity = 0.25;
 let g_globalAngleX = 0;
 let g_globalAngleY = 0;
 
+// camera settings
+var g_eye = [0, 0, 3];
+var g_at = [0, 0, -100];
+var g_up = [0, 1, 0];
+
+// diagnostics
 var g_startTime = performance.now() / 1000.0;
 var g_seconds = performance.now() / 1000.0 - g_startTime;
 
@@ -252,16 +259,28 @@ function renderScene() {
 
   // Pass the projection matrix
   var projMat = new Matrix4();
+  projMat.setPerspective(50, canvas.width / canvas.height, 1, 100);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
   // Pass the view matrix
   var viewMat = new Matrix4();
+  viewMat.setLookAt(
+    g_eye[0],
+    g_eye[1],
+    g_eye[2],
+    g_at[0],
+    g_at[1],
+    g_at[2],
+    g_up[0],
+    g_up[1],
+    g_up[2]
+  );
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
   // Pass the matrix to u_ModelMatrix attribute
   var globalRotMat = new Matrix4()
-    .rotate(g_globalAngleX, 0, 1, 0)
-    .rotate(g_globalAngleY, 1, 0, 0);
+    .rotate(-g_globalAngleX, 0, 1, 0)
+    .rotate(-g_globalAngleY, 1, 0, 0);
 
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
@@ -280,11 +299,10 @@ function renderScene() {
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
+  var fps = 1000 / duration;
+
   sendTextToHTML(
-    " ms: " +
-      Math.floor(duration) +
-      " fps: " +
-      Math.floor(10000 / duration) / 10,
+    `ms: ${Math.floor(duration)} fps: ${Math.floor(fps)}`,
     "numdot"
   );
 }
