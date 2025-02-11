@@ -12,7 +12,7 @@ var VSHADER_SOURCE = `
     uniform mat4 u_ViewMatrix;
     uniform mat4 u_ProjectionMatrix;
     void main() {
-      gl_Position = u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
+      gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
       v_UV = a_UV;
     }`;
 
@@ -24,6 +24,7 @@ var FSHADER_SOURCE = `
     void main() {
         gl_FragColor = u_FragColor;
         gl_FragColor = vec4(v_UV, 1.0, 1.0);
+        //gl_FragColor = texture2D(u_Sampler0, v_UV);
     }`;
 
 // Global Variables
@@ -37,6 +38,7 @@ let u_ModelMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_GlobalRotateMatrix;
+let u_Sampler0;
 
 let rotateSensitivity = 0.25;
 let g_globalAngleX = 0;
@@ -111,9 +113,15 @@ function connectVariablesToGLSL() {
     return;
   }
 
-  // Set an initial value for this matrix to identity
-  var identityM = new Matrix4();
-  gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
+  // Create and set the projection matrix
+  let projMat = new Matrix4();
+  projMat.setPerspective(60, canvas.width / canvas.height, 0.1, 100);
+  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
+
+  // Create and set the view matrix
+  let viewMat = new Matrix4();
+  viewMat.setLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
+  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 }
 
 // Set up actions for the HTML UI elements
