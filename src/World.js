@@ -145,6 +145,8 @@ function connectVariablesToGLSL() {
 
 // Set up actions for the HTML UI elements
 function addActionsForHtmlUI() {
+  document.addEventListener("keydown", keydown);
+
   // Click and drag to rotate
   let isDragging = false;
   let lastX = 0,
@@ -251,6 +253,18 @@ function convertCoordinatesEventToGL(ev) {
   y = (canvas.height / 2 - (y - rect.top)) / (canvas.height / 2);
 
   return [x, y];
+}
+
+function keydown(ev) {
+  if (ev.keyCode == 39) {
+    // Right arrow
+    g_eye[0] += 0.2;
+  } else if (ev.keyCode == 37) {
+    // Left arrow
+    g_eye[0] -= 0.2;
+  }
+
+  renderScene();
 }
 
 function renderScene() {
