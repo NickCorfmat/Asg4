@@ -46,6 +46,17 @@ let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
+var g_map = [
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 0, 0, 0, 0, 0, 0, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1],
+]
+
 // global rotation settings
 let rotateSensitivity = 0.25;
 let g_globalAngleX = 0;
@@ -265,6 +276,19 @@ function keydown(ev) {
   renderScene();
 }
 
+function drawMap() {
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      if (g_map[x][y] == 1) {
+        var wall = new Cube();
+        wall.color = [1.0, 1.0, 1.0, 1.0];
+        wall.matrix.translate(x - 4, -0.75, y - 4);
+        wall.render();
+      }
+    }
+  }
+}
+
 function renderScene() {
   // Check the time at the start of this function
   var startTime = performance.now();
@@ -277,9 +301,15 @@ function renderScene() {
   // Pass the view matrix
   var viewMat = new Matrix4();
   viewMat.setLookAt(
-    g_camera.eye.x, g_camera.eye.y, g_camera.eye.z,
-    g_camera.at.x, g_camera.at.y, g_camera.at.z,
-    g_camera.up.x, g_camera.up.y, g_camera.up.z,
+    g_camera.eye.x,
+    g_camera.eye.y,
+    g_camera.eye.z,
+    g_camera.at.x,
+    g_camera.at.y,
+    g_camera.at.z,
+    g_camera.up.x,
+    g_camera.up.y,
+    g_camera.up.z
   );
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
@@ -297,12 +327,22 @@ function renderScene() {
 
   // world ground
   var ground = new Cube();
-  ground.color = [1.0, 0.0, 0.0, 1.0]
-  ground.textureNum = 0;
-  ground.matrix.translate(0, -0.75, 0);
+  ground.color = [1.0, 0.0, 0.0, 1.0];
+  ground.textureNum = -1;
+  ground.matrix.translate(0, -0.75, 10);
   ground.matrix.scale(10, 0, 10);
   ground.matrix.translate(-0.5, 0, -0.5);
   ground.render();
+
+  // skybox
+  var sky = new Cube();
+  sky.color = [1.0, 0.0, 0.0, 1.0];
+  sky.textureNum = 0;
+  sky.matrix.scale(50, 50, 50);
+  sky.matrix.translate(-0.5, -0.5, 0.5);
+  sky.render();
+
+  drawMap();
 
   var body = new Cube();
   body.color = [1.0, 0.0, 0.0, 1.0];
