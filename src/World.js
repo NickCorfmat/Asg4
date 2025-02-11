@@ -1,6 +1,3 @@
-// Nick Corfmat
-// ncorfmat@ucsc.edu
-
 // Vertex shader program
 var VSHADER_SOURCE = `
     precision mediump float;
@@ -21,10 +18,18 @@ var FSHADER_SOURCE = `
     precision mediump float;
     varying vec2 v_UV;
     uniform vec4 u_FragColor;
+    uniform sampler2D u_Sampler0;
+    uniform int u_whichTexture;
     void main() {
-        gl_FragColor = u_FragColor;
-        gl_FragColor = vec4(v_UV, 1.0, 1.0);
-        //gl_FragColor = texture2D(u_Sampler0, v_UV);
+      if (u_whichTexture == -2) {
+        gl_FragColor = u_FragColor;                   // Use Color
+      } else if (u_whichTexture == -1) {
+       gl_FragColor = vec4(v_UV, 1.0, 1.0)            // Use UV debug color
+      } else if (u_whichTexture == 0) {
+        gl_FragColor = texture2D(u_Sampler0, v_UV);   // Use texture0
+      } else {
+        gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
+      }
     }`;
 
 // Global Variables
@@ -113,15 +118,15 @@ function connectVariablesToGLSL() {
     return;
   }
 
-  // Create and set the projection matrix
-  let projMat = new Matrix4();
-  projMat.setPerspective(60, canvas.width / canvas.height, 0.1, 100);
-  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
+  u_Sampler0 = gl.getUniformLocation(gl.program, "u_Sampler0");
+  if (!u_Sampler0) {
+    console.log("Failed to get the storage location of u_Sampler0.");
+    return;
+  }
 
-  // Create and set the view matrix
-  let viewMat = new Matrix4();
-  viewMat.setLookAt(0, 0, 5, 0, 0, 0, 0, 1, 0);
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
+  // Set an initial value for this matrix to identity
+  var identityM = new Matrix4();
+  gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
 }
 
 // Set up actions for the HTML UI elements
@@ -162,6 +167,38 @@ function addActionsForHtmlUI() {
   });
 }
 
+function initTextures() {
+  var image = new Image();
+  if (!image) {
+    console.log("Failed to create the image object");
+    return false;
+  }
+
+  image.onload = function () {
+    sendTextureToGLSL(image);
+  };
+  image.src = "sky.jpg";
+
+  return true;
+}
+
+function sendTextureToGLSL(image) {
+  var texture = gl.createTexture();
+  if (!texture) {
+    console.log("Failed to create the texture object");
+    return false;
+  }
+
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+  gl.uniform1i(u_Sampler, 0);
+
+  console.log("finished laodTexture");
+}
+
 function main() {
   // Set up canvas and gl variables
   setupWebGL();
@@ -170,13 +207,9 @@ function main() {
   // Set up action for the HTML UI elements
   addActionsForHtmlUI();
 
-  // Register function (event handler) to be called on a mouse press
-  canvas.onmousedown = handleClicks;
-  canvas.onmousemove = function (ev) {
-    if (ev.buttons == 1) {
-      handleClicks(ev);
-    }
-  };
+  //initTextures();
+
+  gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
   requestAnimationFrame(tick);
 }
@@ -209,6 +242,14 @@ function convertCoordinatesEventToGL(ev) {
 function renderScene() {
   // Check the time at the start of this function
   var startTime = performance.now();
+
+  // Pass the projection matrix
+  var projMat = new Matrix4();
+  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
+
+  // Pass the view matrix
+  var viewMat = new Matrix4();
+  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
   // Pass the matrix to u_ModelMatrix attribute
   var globalRotMat = new Matrix4()

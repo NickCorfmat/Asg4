@@ -3,10 +3,13 @@ class Cube {
     this.type = "cube";
     this.color = [1.0, 1.0, 1.0, 1.0];
     this.matrix = new Matrix4();
+    this.textureNum = 0;
   }
 
   render() {
     var rgba = this.color;
+
+    gl.uniform1i(u_whichTexture, this.textureNum);
 
     // Pass the color of a point to u_fragColor variable
     gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -58,28 +61,22 @@ function drawCube(matrix, color) {
 
   const vertices = [
     // Front face
-    0, 0, 0, 1, 0, 0, 1, 0, -1,
-    0, 0, 0, 1, 0, -1, 0, 0, -1,
+    0, 0, 0, 1, 0, 0, 1, 0, -1, 0, 0, 0, 1, 0, -1, 0, 0, -1,
 
     // Back face
-    0, 1, 0, 1, 1, 0, 1, 1, -1,
-    0, 1, 0, 1, 1, -1, 0, 1, -1,
+    0, 1, 0, 1, 1, 0, 1, 1, -1, 0, 1, 0, 1, 1, -1, 0, 1, -1,
 
     // Left face
-    0, 0, 0, 0, 0, -1, 0, 1, -1,
-    0, 0, 0, 0, 1, -1, 0, 1, 0,
+    0, 0, 0, 0, 0, -1, 0, 1, -1, 0, 0, 0, 0, 1, -1, 0, 1, 0,
 
     // Right face
-    1, 0, 0, 1, 0, -1, 1, 1, -1,
-    1, 0, 0, 1, 1, -1, 1, 1, 0,
+    1, 0, 0, 1, 0, -1, 1, 1, -1, 1, 0, 0, 1, 1, -1, 1, 1, 0,
 
     // Top face
-    0, 0, 0, 1, 1, 0, 1, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 1, 0,
+    0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0,
 
     // Bottom face
-    0, 0, -1, 1, 0, -1, 1, 1, -1,
-    0, 0, -1, 1, 1, -1, 0, 1, -1,
+    0, 0, -1, 1, 0, -1, 1, 1, -1, 0, 0, -1, 1, 1, -1, 0, 1, -1,
   ];
 
   var vertexBuffer = gl.createBuffer();
