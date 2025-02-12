@@ -349,8 +349,8 @@ function renderScene() {
 
   // skybox
   var sky = new Cube();
-  sky.color = [1.0, 0.0, 0.0, 1.0];
-  sky.textureNum = 0;
+  sky.color = [0.635, 0.682, 0.996, 1.0];
+  sky.textureNum = -2;
   sky.matrix.scale(50, 50, 50);
   sky.matrix.translate(-0.5, -0.5, 0.5);
   sky.render();
