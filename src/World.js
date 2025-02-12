@@ -277,13 +277,15 @@ function keydown(ev) {
 }
 
 function drawMap() {
-  for (let x = 0; x < 8; x++) {
-    for (let y = 0; y < 8; y++) {
-      if (g_map[x][y] == 1) {
+  for (let x = 0; x < 32; x++) {
+    for (let y = 0; y < 32; y++) {
+      if (x < 1 || x == 31 || y < 1 || y == 31) {
         var wall = new Cube();
         wall.color = [1.0, 1.0, 1.0, 1.0];
-        wall.matrix.translate(x - 4, -0.75, y - 4);
-        wall.render();
+        wall.matrix.translate(0, -0.75, 0)
+        wall.matrix.scale(0.4, 0.4, 0.4)
+        wall.matrix.translate(x - 16, 0, y - 16);
+        wall.renderfast();
       }
     }
   }
