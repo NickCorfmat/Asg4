@@ -19,6 +19,7 @@ var FSHADER_SOURCE = `
     varying vec2 v_UV;
     uniform vec4 u_FragColor;
     uniform sampler2D u_Sampler0;
+    uniform sampler2D u_Sampler1;
     uniform int u_whichTexture;
     void main() {
       if (u_whichTexture == -2) {
@@ -27,6 +28,8 @@ var FSHADER_SOURCE = `
        gl_FragColor = vec4(v_UV, 1.0, 1.0);            // Use UV debug color
       } else if (u_whichTexture == 0) {
         gl_FragColor = texture2D(u_Sampler0, v_UV);   // Use texture0
+      } else if (u_whichTexture == 1) {
+        gl_FragColor = texture2D(u_Sampler1, v_UV);   // Use texture1
       } else {
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
@@ -55,7 +58,7 @@ var g_map = [
   [1, 0, 0, 0, 0, 0, 0, 1],
   [1, 0, 0, 0, 0, 0, 0, 1],
   [1, 1, 1, 1, 1, 1, 1, 1],
-]
+];
 
 // global rotation settings
 let rotateSensitivity = 0.25;
@@ -135,12 +138,6 @@ function connectVariablesToGLSL() {
     return;
   }
 
-  u_Sampler0 = gl.getUniformLocation(gl.program, "u_Sampler0");
-  if (!u_Sampler0) {
-    console.log("Failed to get the storage location of u_Sampler0.");
-    return;
-  }
-
   u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
   if (!u_whichTexture) {
     console.log("Failed to get the storage location of u_whichTexture.");
@@ -193,21 +190,26 @@ function addActionsForHtmlUI() {
 }
 
 function initTextures() {
-  var image = new Image();
-  if (!image) {
-    console.log("Failed to create the image object");
-    return false;
-  }
+  const textures = ["sky.jpg", "brick.jpg"];
 
-  image.onload = function () {
-    sendTextureToGLSL(image);
-  };
-  image.src = "../assets/sky.jpg";
+  for (let i = 0; i < textures.length; i++) {
+    var image = new Image();
+    if (!image) {
+      console.log("Failed to create the image object");
+      return false;
+    }
+
+    image.onload = function () {
+      sendTextureToGLSL(image, i);
+    };
+
+    image.src = `../assets/${textures[i]}`;
+  }
 
   return true;
 }
 
-function sendTextureToGLSL(image) {
+function sendTextureToGLSL(image, index) {
   var texture = gl.createTexture();
   if (!texture) {
     console.log("Failed to create the texture object");
@@ -215,11 +217,11 @@ function sendTextureToGLSL(image) {
   }
 
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-  gl.activeTexture(gl.TEXTURE0);
+  gl.activeTexture(gl["TEXTURE" + index]);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  gl.uniform1i(u_Sampler0, 0);
+  gl.uniform1i(gl.getUniformLocation(gl.program, "u_Sampler" + index), index);
 
   console.log("finished loadTexture");
 }
@@ -279,8 +281,10 @@ function keydown(ev) {
     g_camera.eye.x += 0.2;
   } else if (ev.keyCode == 81) {
     // Turn left
+    g_globalAngleX += 5;
   } else if (ev.keyCode == 69) {
     // Turn left
+    g_globalAngleX -= 5;
   }
 
   renderScene();
@@ -293,10 +297,12 @@ function drawMap() {
     for (let y = 0; y < 32; y++) {
       if (x < 1 || x == 31 || y < 1 || y == 31) {
         wall.color = [1.0, 1.0, 1.0, 1.0];
-        wall.matrix.translate(0, -0.75, 0)
-        wall.matrix.scale(0.4, 0.4, 0.4)
+        wall.textureNum = 1;
+        wall.matrix.translate(0, -0.75, 0);
+        wall.matrix.scale(0.3, 0.3, 0.3);
         wall.matrix.translate(x - 16, 0, y - 16);
         wall.renderfast();
+        wall.matrix.setIdentity();
       }
     }
   }
@@ -345,15 +351,15 @@ function renderScene() {
   ground.matrix.translate(0, -0.75, 10);
   ground.matrix.scale(10, 0, 10);
   ground.matrix.translate(-0.5, 0, -0.5);
-  ground.render();
+  ground.renderfast();
 
   // skybox
   var sky = new Cube();
   sky.color = [0.635, 0.682, 0.996, 1.0];
-  sky.textureNum = -2;
+  sky.textureNum = 0;
   sky.matrix.scale(50, 50, 50);
   sky.matrix.translate(-0.5, -0.5, 0.5);
-  sky.render();
+  sky.renderfast();
 
   drawMap();
 
@@ -362,7 +368,7 @@ function renderScene() {
   player.textureNum = 0;
   player.matrix.translate(-0.25, -0.74, 0.0);
   player.matrix.scale(0.5, 0.3, 0.5);
-  player.render();
+  player.renderfast();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
