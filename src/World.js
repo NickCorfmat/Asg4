@@ -49,15 +49,18 @@ let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
-var g_map = [
-  [1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 0, 0, 0, 0, 0, 0, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1],
+// map settings
+let blockSize = 0.2;
+
+let g_map = [
+  [4, 4, 0, 0, 0, 0, 4, 4],
+  [4, 0, 0, 0, 0, 0, 0, 4],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 2, 3, 0, 0, 0],
+  [0, 0, 0, 1, 4, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [4, 0, 0, 0, 0, 0, 0, 4],
+  [4, 4, 0, 0, 0, 0, 4, 4],
 ];
 
 // global rotation settings
@@ -292,17 +295,43 @@ function keydown(ev) {
 
 function drawMap() {
   var wall = new Cube();
+  wall.textureNum = 1;
 
-  for (let x = 0; x < 32; x++) {
-    for (let y = 0; y < 32; y++) {
-      if (x < 1 || x == 31 || y < 1 || y == 31) {
-        wall.color = [1.0, 1.0, 1.0, 1.0];
-        wall.textureNum = 1;
-        wall.matrix.translate(0, -0.75, 0);
-        wall.matrix.scale(0.3, 0.3, 0.3);
-        wall.matrix.translate(x - 16, 0, y - 16);
-        wall.renderfast();
-        wall.matrix.setIdentity();
+  // for (let x = 0; x < 32; x++) {
+  //   for (let y = 0; y < 32; y++) {
+  //     if (x < 1 || x == 31 || y < 1 || y == 31) {
+  //       wall.textureNum = 1;
+  //       wall.matrix.translate(0, -0.75, 0);
+  //       wall.matrix.scale(0.3, 0.3, 0.3);
+  //       wall.matrix.translate(x - 16, 0, y - 16);
+  //       wall.renderfast();
+  //       wall.matrix.setIdentity();
+  //     }
+  //   }
+  // }
+
+  for (let x = 0; x < 4; x++) {
+    for (let y = 0; y < 4; y++) {
+      drawMapChunk(wall, x, y);
+    }
+  }
+}
+
+function drawMapChunk(wall, chunkX, chunkY) {
+  let stackHeight;
+
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      stackHeight = g_map[x][y];
+
+      if (stackHeight > 0) {
+        for (let z = 0; z < stackHeight; z++) {
+          wall.matrix.translate(0, -0.75 + z * blockSize, 0);
+          wall.matrix.scale(blockSize, blockSize, blockSize);
+          wall.matrix.translate(x - chunkX * 8, 0, y - chunkY * 8);
+          wall.renderfast();
+          wall.matrix.setIdentity();
+        }
       }
     }
   }
@@ -314,7 +343,7 @@ function renderScene() {
 
   // Pass the projection matrix
   var projMat = new Matrix4();
-  projMat.setPerspective(50, canvas.width / canvas.height, 1, 100);
+  projMat.setPerspective(50, canvas.width / canvas.height, 0.1, 100);
   gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
 
   // Pass the view matrix
@@ -344,22 +373,20 @@ function renderScene() {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+  // skybox
+  var sky = new Cube();
+  sky.color = [0.635, 0.682, 0.996, 1.0];
+  sky.matrix.scale(50, 50, 50);
+  sky.matrix.translate(-0.5, -0.5, 0.5);
+  sky.renderfast();
+
   // world ground
   var ground = new Cube();
   ground.color = [0.478, 0.741, 0.216, 1.0];
-  ground.textureNum = -2;
   ground.matrix.translate(0, -0.75, 10);
   ground.matrix.scale(10, 0, 10);
   ground.matrix.translate(-0.5, 0, -0.5);
   ground.renderfast();
-
-  // skybox
-  var sky = new Cube();
-  sky.color = [0.635, 0.682, 0.996, 1.0];
-  sky.textureNum = 0;
-  sky.matrix.scale(50, 50, 50);
-  sky.matrix.translate(-0.5, -0.5, 0.5);
-  sky.renderfast();
 
   drawMap();
 
