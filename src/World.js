@@ -202,7 +202,7 @@ function initTextures() {
   image.onload = function () {
     sendTextureToGLSL(image);
   };
-  image.src = "sky.jpg";
+  image.src = "../assets/sky.jpg";
 
   return true;
 }
@@ -265,22 +265,33 @@ function convertCoordinatesEventToGL(ev) {
 }
 
 function keydown(ev) {
-  if (ev.keyCode == 39) {
-    // Right arrow
-    g_camera.eye.x += 0.2;
-  } else if (ev.keyCode == 37) {
-    // Left arrow
+  if (ev.keyCode == 87) {
+    // Up
+    g_camera.eye.z -= 0.2;
+  } else if (ev.keyCode == 83) {
+    // Down
+    g_camera.eye.z += 0.2;
+  } else if (ev.keyCode == 65) {
+    // Left
     g_camera.eye.x -= 0.2;
+  } else if (ev.keyCode == 68) {
+    // Right
+    g_camera.eye.x += 0.2;
+  } else if (ev.keyCode == 81) {
+    // Turn left
+  } else if (ev.keyCode == 69) {
+    // Turn left
   }
 
   renderScene();
 }
 
 function drawMap() {
+  var wall = new Cube();
+
   for (let x = 0; x < 32; x++) {
     for (let y = 0; y < 32; y++) {
       if (x < 1 || x == 31 || y < 1 || y == 31) {
-        var wall = new Cube();
         wall.color = [1.0, 1.0, 1.0, 1.0];
         wall.matrix.translate(0, -0.75, 0)
         wall.matrix.scale(0.4, 0.4, 0.4)
@@ -329,8 +340,8 @@ function renderScene() {
 
   // world ground
   var ground = new Cube();
-  ground.color = [1.0, 0.0, 0.0, 1.0];
-  ground.textureNum = -1;
+  ground.color = [0.478, 0.741, 0.216, 1.0];
+  ground.textureNum = -2;
   ground.matrix.translate(0, -0.75, 10);
   ground.matrix.scale(10, 0, 10);
   ground.matrix.translate(-0.5, 0, -0.5);
@@ -346,13 +357,12 @@ function renderScene() {
 
   drawMap();
 
-  var body = new Cube();
-  body.color = [1.0, 0.0, 0.0, 1.0];
-  body.textureNum = 0;
-  body.matrix.translate(-0.25, -0.75, 0.0);
-  body.matrix.rotate(-5, 1, 0, 0);
-  body.matrix.scale(0.5, 0.3, 0.5);
-  body.render();
+  var player = new Cube();
+  player.color = [1.0, 0.0, 0.0, 1.0];
+  player.textureNum = 0;
+  player.matrix.translate(-0.25, -0.74, 0.0);
+  player.matrix.scale(0.5, 0.3, 0.5);
+  player.render();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
