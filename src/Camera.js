@@ -6,42 +6,44 @@ class Camera {
   }
 
   forward() {
-    var f = this.at.sub(this.eye);
-    f.normalize();
-    this.at.add(f);
+    console.log("forward");
+    let f = new Vector3(this.at.elements);
+    f.sub(this.eye).normalize();
     this.eye.add(f);
+    this.at.add(f);
   }
 
   back() {
-    var f = this.eye.sub(this.at);
-    f.normalize();
-    this.at.add(f);
+    console.log("back");
+    let f = new Vector3(this.eye.elements);
+    f.sub(this.at).normalize();
     this.eye.add(f);
+    this.at.add(f);
   }
 
   left() {
-    var f = this.eye.sub(this.at);
-    f.normalize();
-    var s = Vector3.cross(f, this.up);
-    s.normalize();
-    this.at.add(s);
+    console.log("left");
+    let f = new Vector3(this.eye.elements);
+    f.sub(this.at).normalize();
+    let s = Vector3.cross(f, this.up).normalize();
     this.eye.add(s);
+    this.at.add(s);
   }
 
   right() {
-    var f = this.at.sub(this.eye);
-    f.normalize();
-    var s = Vector3.cross(this.up, f);
-    s.normalize();
-    this.at.add(s);
+    console.log("right");
+    let f = new Vector3(this.eye.elements);
+    f.sub(this.at).normalize();
+    let s = Vector3.cross(this.up, f).normalize();
     this.eye.add(s);
+    this.at.add(s);
   }
 
   turnLeft() {
-    
+    console.log("turn left");
   }
 
   turnRight() {
-    
+    console.log("turn right");
   }
 }
