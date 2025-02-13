@@ -49,15 +49,15 @@ let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
+const textures = ["sky.jpg", "brick.jpg"];
+
 let map = new Map();
+let camera = new Camera();
 
 // global rotation settings
 let rotateSensitivity = 0.25;
-let g_globalAngleX = 0;
-let g_globalAngleY = 0;
-
-// camera settings
-let g_camera = new Camera();
+let globalAngleX = 0;
+let globalAngleY = 0;
 
 // diagnostics
 var g_startTime = performance.now() / 1000.0;
@@ -165,8 +165,8 @@ function addActionsForHtmlUI() {
       let deltaX = ev.clientX - lastX;
       let deltaY = ev.clientY - lastY;
 
-      g_globalAngleX -= deltaX * rotateSensitivity;
-      g_globalAngleY -= deltaY * rotateSensitivity;
+      globalAngleX -= deltaX * rotateSensitivity;
+      globalAngleY -= deltaY * rotateSensitivity;
 
       lastX = ev.clientX;
       lastY = ev.clientY;
@@ -181,8 +181,6 @@ function addActionsForHtmlUI() {
 }
 
 function initTextures() {
-  const textures = ["sky.jpg", "brick.jpg"];
-
   for (let i = 0; i < textures.length; i++) {
     var image = new Image();
     if (!image) {
@@ -260,22 +258,22 @@ function convertCoordinatesEventToGL(ev) {
 function keydown(ev) {
   if (ev.keyCode == 87) {
     // Up
-    g_camera.eye.z -= 0.2;
+    camera.eye.z -= 0.2;
   } else if (ev.keyCode == 83) {
     // Down
-    g_camera.eye.z += 0.2;
+    camera.eye.z += 0.2;
   } else if (ev.keyCode == 65) {
     // Left
-    g_camera.eye.x -= 0.2;
+    camera.eye.x -= 0.2;
   } else if (ev.keyCode == 68) {
     // Right
-    g_camera.eye.x += 0.2;
+    camera.eye.x += 0.2;
   } else if (ev.keyCode == 81) {
     // Turn left
-    g_globalAngleX += 5;
+    globalAngleX += 5;
   } else if (ev.keyCode == 69) {
     // Turn left
-    g_globalAngleX -= 5;
+    globalAngleX -= 5;
   }
 
   renderScene();
@@ -293,26 +291,24 @@ function renderScene() {
   // Pass the view matrix
   var viewMat = new Matrix4();
   viewMat.setLookAt(
-    g_camera.eye.x,
-    g_camera.eye.y,
-    g_camera.eye.z,
-    g_camera.at.x,
-    g_camera.at.y,
-    g_camera.at.z,
-    g_camera.up.x,
-    g_camera.up.y,
-    g_camera.up.z
+    camera.eye.x,
+    camera.eye.y,
+    camera.eye.z,
+    camera.at.x,
+    camera.at.y,
+    camera.at.z,
+    camera.up.x,
+    camera.up.y,
+    camera.up.z
   );
   gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
 
   // Pass the matrix to u_ModelMatrix attribute
   var globalRotMat = new Matrix4()
-    .rotate(-g_globalAngleX, 0, 1, 0)
-    .rotate(-g_globalAngleY, 1, 0, 0);
+    .rotate(-globalAngleX, 0, 1, 0)
+    .rotate(-globalAngleY, 1, 0, 0);
 
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
-
-  gl.clearColor(0, 0, 0, 1);
 
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
