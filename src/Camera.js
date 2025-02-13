@@ -47,9 +47,11 @@ class Camera {
 
   turnLeft() {
     console.log("turn left");
+    
   }
 
   turnRight() {
     console.log("turn right");
+    
   }
 }
