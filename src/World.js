@@ -258,22 +258,20 @@ function convertCoordinatesEventToGL(ev) {
 function keydown(ev) {
   if (ev.keyCode == 87) {
     // Up
-    camera.eye.z -= 0.2;
+    camera.forward();
   } else if (ev.keyCode == 83) {
     // Down
-    camera.eye.z += 0.2;
+    camera.back();
   } else if (ev.keyCode == 65) {
     // Left
-    camera.eye.x -= 0.2;
+    camera.left();
   } else if (ev.keyCode == 68) {
     // Right
-    camera.eye.x += 0.2;
+    camera.right();
   } else if (ev.keyCode == 81) {
     // Turn left
-    globalAngleX += 5;
   } else if (ev.keyCode == 69) {
     // Turn left
-    globalAngleX -= 5;
   }
 
   renderScene();
@@ -326,8 +324,8 @@ function renderScene() {
   var ground = new Cube();
   ground.color = [0.478, 0.741, 0.216, 1.0];
   ground.matrix.translate(0, -0.75, 10);
-  ground.matrix.scale(20, 0, 20);
-  ground.matrix.translate(-0.5, 0, 0);
+  ground.matrix.scale(12, 0, 12);
+  ground.matrix.translate(-0.7, 0, -0.575);
   ground.renderfast();
 
   var player = new Cube();
