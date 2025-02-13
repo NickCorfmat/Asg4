@@ -36,4 +36,12 @@ class Camera {
     this.at.add(s);
     this.eye.add(s);
   }
+
+  turnLeft() {
+    
+  }
+
+  turnRight() {
+    
+  }
 }

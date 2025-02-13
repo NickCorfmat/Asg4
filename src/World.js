@@ -25,7 +25,7 @@ var FSHADER_SOURCE = `
       if (u_whichTexture == -2) {
         gl_FragColor = u_FragColor;                   // Use Color
       } else if (u_whichTexture == -1) {
-       gl_FragColor = vec4(v_UV, 1.0, 1.0);            // Use UV debug color
+       gl_FragColor = vec4(v_UV, 1.0, 1.0);           // Use UV debug color
       } else if (u_whichTexture == 0) {
         gl_FragColor = texture2D(u_Sampler0, v_UV);   // Use texture0
       } else if (u_whichTexture == 1) {
@@ -269,9 +269,11 @@ function keydown(ev) {
     // Right
     camera.right();
   } else if (ev.keyCode == 81) {
-    // Turn left
+    // Q
+    camera.turnLeft();
   } else if (ev.keyCode == 69) {
-    // Turn left
+    // E
+    camera.turnRight();
   }
 
   renderScene();
