@@ -274,10 +274,10 @@ function keydown(ev) {
     camera.right();
   } else if (ev.keyCode == 81) {
     // Q
-    camera.turnLeft();
+    camera.panLeft();
   } else if (ev.keyCode == 69) {
     // E
-    camera.turnRight();
+    camera.panRight();
   }
 
   renderScene();
