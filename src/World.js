@@ -288,24 +288,10 @@ function renderScene() {
   var startTime = performance.now();
 
   // Pass the projection matrix
-  var projMat = new Matrix4();
-  projMat.setPerspective(50, canvas.width / canvas.height, 0.1, 100);
-  gl.uniformMatrix4fv(u_ProjectionMatrix, false, projMat.elements);
+  gl.uniformMatrix4fv(u_ProjectionMatrix, false, camera.projMat.elements);
 
   // Pass the view matrix
-  var viewMat = new Matrix4();
-  viewMat.setLookAt(
-    camera.eye.x,
-    camera.eye.y,
-    camera.eye.z,
-    camera.at.x,
-    camera.at.y,
-    camera.at.z,
-    camera.up.x,
-    camera.up.y,
-    camera.up.z
-  );
-  gl.uniformMatrix4fv(u_ViewMatrix, false, viewMat.elements);
+  gl.uniformMatrix4fv(u_ViewMatrix, false, camera.viewMat.elements);
 
   // Pass the matrix to u_ModelMatrix attribute
   var globalRotMat = new Matrix4()

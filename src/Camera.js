@@ -4,7 +4,15 @@ class Camera {
     this.at = new Vector3([0, 0, -100]);
     this.up = new Vector3([0, 1, 0]);
 
+    this.fov = 50;
     this.stepSize = 0.1;
+
+    this.viewMat = new Matrix4();
+    this.projMat = new Matrix4();
+
+    this.canvas = document.getElementById("webgl");
+
+    this.updateMatrices();
   }
 
   forward() {
@@ -13,6 +21,7 @@ class Camera {
     f.mul(this.stepSize);
     this.eye.add(f);
     this.at.add(f);
+    this.updateMatrices();
   }
 
   back() {
@@ -21,6 +30,7 @@ class Camera {
     f.mul(this.stepSize);
     this.eye.add(f);
     this.at.add(f);
+    this.updateMatrices();
   }
 
   left() {
@@ -30,6 +40,7 @@ class Camera {
     s.mul(this.stepSize);
     this.eye.add(s);
     this.at.add(s);
+    this.updateMatrices();
   }
 
   right() {
@@ -39,10 +50,18 @@ class Camera {
     s.mul(this.stepSize);
     this.eye.add(s);
     this.at.add(s);
+    this.updateMatrices();
   }
 
   panLeft() {
-    let alpha = 5; // Rotation angle in degrees
+    this.panCamera(5);
+  }
+
+  panRight() {
+    this.panCamera(-5);
+  }
+
+  panCamera(alpha) {
     let radians = (alpha * Math.PI) / 180;
     let f = new Vector3(this.at.elements);
     f.sub(this.eye).normalize();
@@ -84,9 +103,27 @@ class Camera {
     ]);
 
     this.at.set(this.eye).add(f_prime);
+    this.updateMatrices();
   }
 
-  panLeft() {}
+  updateMatrices() {
+    this.projMat.setPerspective(
+      this.fov,
+      this.canvas.width / this.canvas.height,
+      0.1,
+      100
+    );
 
-  panRight() {}
+    this.viewMat.setLookAt(
+      this.eye.x,
+      this.eye.y,
+      this.eye.z,
+      this.at.x,
+      this.at.y,
+      this.at.z,
+      this.up.x,
+      this.up.y,
+      this.up.z
+    );
+  }
 }
