@@ -3,12 +3,15 @@ class Camera {
     this.eye = new Vector3([0, 0, 3]);
     this.at = new Vector3([0, 0, -100]);
     this.up = new Vector3([0, 1, 0]);
+
+    this.stepSize = 0.1;
   }
 
   forward() {
     console.log("forward");
     let f = new Vector3(this.at.elements);
     f.sub(this.eye).normalize();
+    f.mul(this.stepSize);
     this.eye.add(f);
     this.at.add(f);
   }
@@ -17,6 +20,7 @@ class Camera {
     console.log("back");
     let f = new Vector3(this.eye.elements);
     f.sub(this.at).normalize();
+    f.mul(this.stepSize);
     this.eye.add(f);
     this.at.add(f);
   }
@@ -26,6 +30,7 @@ class Camera {
     let f = new Vector3(this.eye.elements);
     f.sub(this.at).normalize();
     let s = Vector3.cross(f, this.up).normalize();
+    s.mul(this.stepSize);
     this.eye.add(s);
     this.at.add(s);
   }
@@ -35,6 +40,7 @@ class Camera {
     let f = new Vector3(this.eye.elements);
     f.sub(this.at).normalize();
     let s = Vector3.cross(this.up, f).normalize();
+    s.mul(this.stepSize);
     this.eye.add(s);
     this.at.add(s);
   }
