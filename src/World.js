@@ -21,6 +21,7 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler0;
     uniform sampler2D u_Sampler1;
     uniform sampler2D u_Sampler2;
+    uniform sampler2D u_Sampler3;
     uniform int u_whichTexture;
     void main() {
       if (u_whichTexture == -2) {
@@ -33,6 +34,8 @@ var FSHADER_SOURCE = `
         gl_FragColor = texture2D(u_Sampler1, v_UV);   // Use texture1
       } else if (u_whichTexture == 2) {
         gl_FragColor = texture2D(u_Sampler2, v_UV);   // Use texture2
+      } else if (u_whichTexture == 3) {
+        gl_FragColor = texture2D(u_Sampler3, v_UV);   // Use texture3
       } else {
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
@@ -52,7 +55,7 @@ let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
-const textures = ["sky.jpg", "brick.jpg", "lucky.jpg"];
+const textures = ["brick.jpg", "pipe.jpg", "lucky.jpg"];
 
 let map = new Map();
 let camera = new Camera();
