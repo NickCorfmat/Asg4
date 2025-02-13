@@ -3,6 +3,10 @@
     background-color: rgb(29, 29, 29);
 }
 
+* {
+    user-select: none;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -35,4 +39,20 @@ p {
 #webgl {
     border-radius: 4px;
     box-shadow: 0px 3px 12px rgba(46, 46, 46, 0.5);
+}
+
+.pipe {
+    position: fixed;
+    bottom: 0;
+    width: 15vw;
+    height: auto;
+    pointer-events: none;
+}
+
+.pipe-left {
+    left: 50px;
+}
+
+.pipe-right {
+    right: 50px;
 }
