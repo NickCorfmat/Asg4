@@ -34,7 +34,7 @@ class Map {
         if (stackHeight > 0) {
           for (let z = 0; z < stackHeight; z++) {
             this.block.textureNum = 0;
-            this.block.matrix.translate(0, -0.74 + z * this.blockSize, 0);
+            this.block.matrix.translate(0, z * this.blockSize, 0);
             this.block.matrix.scale(
               this.blockSize,
               this.blockSize,
@@ -62,7 +62,7 @@ class Map {
     if (type == -1) {
       // Pipe block
       this.block.textureNum = 1;
-      this.block.matrix.translate(0, -0.74, 0);
+      this.block.matrix.translate(0, 0, 0);
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
 
       this.block.matrix.translate(worldX, 0, worldY);
@@ -72,7 +72,7 @@ class Map {
       // green top
       this.block.color = [0, 0.4, 0, 1];
       this.block.textureNum = -2;
-      this.block.matrix.translate(0, -0.74 + this.blockSize, 0);
+      this.block.matrix.translate(0, this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
 
       this.block.matrix.translate(worldX, 0, worldY);
@@ -81,7 +81,7 @@ class Map {
     } else if (type == -2) {
       // Lucky Block
       this.block.textureNum = 2;
-      this.block.matrix.translate(0, -0.74 + 4 * this.blockSize, 0);
+      this.block.matrix.translate(0, 4 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
       this.block.matrix.translate(worldX, 0, worldY);
       this.block.renderfast();
@@ -90,14 +90,14 @@ class Map {
       // top
       this.block.color = [0.862, 0.557, 0.211, 1];
       this.block.textureNum = -2;
-      this.block.matrix.translate(0, -0.74 + 5 * this.blockSize + 0.001, 0);
+      this.block.matrix.translate(0, 5 * this.blockSize + 0.001, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(worldX, 0, worldY);
       this.block.renderfast();
       this.block.matrix.setIdentity();
 
       // bottom
-      this.block.matrix.translate(0, -0.74 + 3.999 * this.blockSize, 0);
+      this.block.matrix.translate(0, 3.999 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(worldX, 0, worldY);
       this.block.renderfast();

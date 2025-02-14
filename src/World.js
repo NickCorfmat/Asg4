@@ -21,6 +21,7 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler1;
     uniform sampler2D u_Sampler2;
     uniform sampler2D u_Sampler3;
+    uniform sampler2D u_Sampler4;
     uniform int u_whichTexture;
     void main() {
       if (u_whichTexture == -2) {
@@ -35,6 +36,8 @@ var FSHADER_SOURCE = `
         gl_FragColor = texture2D(u_Sampler2, v_UV);   // Use texture2
       } else if (u_whichTexture == 3) {
         gl_FragColor = texture2D(u_Sampler3, v_UV);   // Use texture3
+      } else if (u_whichTexture == 4) {
+        gl_FragColor = texture2D(u_Sampler4, v_UV);   // Use texture4
       } else {
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
@@ -58,7 +61,7 @@ let camera = new Camera();
 let rotateSensitivity = 0.15;
 
 let map = new Map(camera);
-const textures = ["brick.jpg", "pipe.jpg", "lucky.jpg"];
+const textures = ["brick.jpg", "pipe.jpg", "lucky.jpg", "backdrop1.jpg"];
 
 // diagnostics
 var g_startTime = performance.now() / 1000.0;
@@ -286,18 +289,40 @@ function renderScene() {
 
   // skybox
   var sky = new Cube();
-  sky.color = [0.635, 0.682, 0.996, 1.0];
-  sky.matrix.scale(50, 50, 50);
-  sky.matrix.translate(-0.5, -0.5, 0.5);
+  sky.textureNum = 3;
+  sky.matrix.scale(10, 10, 10);
+  sky.matrix.translate(0, -0.001, 0.955);
   sky.renderfast();
+  sky.matrix.setIdentity();
+  sky.textureNum = -2;
+  sky.color = [0.635, 0.682, 0.996, 1.0];
+  sky.matrix.translate(0, 9.9, 0);
+  sky.matrix.scale(10, 0.01, 10);
+  sky.matrix.translate(0, 0, 0.955);
+  sky.renderfast();
+  sky.matrix.setIdentity();
 
   // world ground
   var ground = new Cube();
   ground.color = [0.478, 0.741, 0.216, 1.0];
-  ground.matrix.translate(0, -0.75, 9.5);
+  ground.matrix.translate(0, -0.001, 9.5);
   ground.matrix.scale(10, 0, 10);
   ground.matrix.translate(0, 0, 0);
   ground.renderfast();
+
+  // world ground
+  var bird = new Cube();
+  for (let i = 0; i < 6; i++) {
+    bird.color = [1, 0, 0, 1];
+    bird.matrix.scale(0.2, 0.2, 0.2);
+    if (i % 2 == 0) {
+      bird.matrix.translate(20 * Math.cos(0.5 * g_seconds) + 20, 10, i * 7 + 3);
+    } else {
+      bird.matrix.translate(20 * Math.sin(0.5 * g_seconds) + 20, 10, i * 7 + 3);
+    }
+    bird.renderfast();
+    bird.matrix.setIdentity();
+  }
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
