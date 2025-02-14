@@ -53,14 +53,6 @@ class Camera {
     this.updateMatrices();
   }
 
-  panLeft() {
-    this.pan(5);
-  }
-
-  panRight() {
-    this.pan(-5);
-  }
-
   pan(alpha) {
     let radians = (alpha * Math.PI) / 180;
     let f = new Vector3(this.at.elements);
@@ -107,6 +99,59 @@ class Camera {
     this.at.set(this.eye).add(f_prime);
 
     // End camera pan calculations
+
+    this.updateMatrices();
+  }
+
+  tilt(angle) {
+    let radians = (angle * Math.PI) / 180;
+    let f = new Vector3(this.at.elements);
+    f.sub(this.eye).normalize();
+
+    let s = Vector3.cross(new Vector3([0, 1, 0]), f).normalize();
+
+    // Camera tilt calculations derived with the help of ChatGPT
+
+    let cosA = Math.cos(radians);
+    let sinA = Math.sin(radians);
+    let sx = s.x,
+      sy = s.y,
+      sz = s.z;
+
+    let rotationMatrix = [
+      [
+        cosA + sx * sx * (1 - cosA),
+        sx * sy * (1 - cosA) - sz * sinA,
+        sx * sz * (1 - cosA) + sy * sinA,
+      ],
+      [
+        sy * sx * (1 - cosA) + sz * sinA,
+        cosA + sy * sy * (1 - cosA),
+        sy * sz * (1 - cosA) - sx * sinA,
+      ],
+      [
+        sz * sx * (1 - cosA) - sy * sinA,
+        sz * sy * (1 - cosA) + sx * sinA,
+        cosA + sz * sz * (1 - cosA),
+      ],
+    ];
+
+    let f_prime = new Vector3([
+      rotationMatrix[0][0] * f.x +
+        rotationMatrix[0][1] * f.y +
+        rotationMatrix[0][2] * f.z,
+      rotationMatrix[1][0] * f.x +
+        rotationMatrix[1][1] * f.y +
+        rotationMatrix[1][2] * f.z,
+      rotationMatrix[2][0] * f.x +
+        rotationMatrix[2][1] * f.y +
+        rotationMatrix[2][2] * f.z,
+    ]);
+
+    this.at.set(this.eye).add(f_prime);
+    this.up = new Vector3([0, 1, 0]);
+
+    // End camera tilt calculations
 
     this.updateMatrices();
   }

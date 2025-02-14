@@ -155,6 +155,7 @@ function addActionsForHtmlUI() {
       let deltaY = ev.clientY - lastY;
 
       camera.pan(deltaX * rotateSensitivity);
+      camera.tilt(-deltaY * rotateSensitivity);
 
       lastX = ev.clientX;
       lastY = ev.clientY;
@@ -254,10 +255,10 @@ function keydown(ev) {
     camera.right();
   } else if (ev.keyCode == 81) {
     // Q
-    camera.panLeft();
+    camera.pan(5);
   } else if (ev.keyCode == 69) {
     // E
-    camera.panRight();
+    camera.pan(-5);
   }
 
   renderScene();
