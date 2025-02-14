@@ -53,13 +53,12 @@ let u_ViewMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
-const textures = ["brick.jpg", "pipe.jpg", "lucky.jpg"];
-
-let map = new Map();
-
 // camera settings
 let camera = new Camera();
 let rotateSensitivity = 0.15;
+
+let map = new Map(camera);
+const textures = ["brick.jpg", "pipe.jpg", "lucky.jpg"];
 
 // diagnostics
 var g_startTime = performance.now() / 1000.0;
@@ -259,6 +258,12 @@ function keydown(ev) {
   } else if (ev.keyCode == 69) {
     // E
     camera.pan(-5);
+  } else if (ev.keyCode == 70) {
+    // F
+    map.addBlock();
+  } else if (ev.keyCode == 71) {
+    // G
+    map.removeBlock();
   }
 
   renderScene();
@@ -289,17 +294,10 @@ function renderScene() {
   // world ground
   var ground = new Cube();
   ground.color = [0.478, 0.741, 0.216, 1.0];
-  ground.matrix.translate(0, -0.75, 10);
-  ground.matrix.scale(12, 0, 12);
-  ground.matrix.translate(-0.7, 0, -0.575);
+  ground.matrix.translate(0, -0.75, 9.5);
+  ground.matrix.scale(10, 0, 10);
+  ground.matrix.translate(0, 0, 0);
   ground.renderfast();
-
-  var player = new Cube();
-  player.color = [1.0, 0.0, 0.0, 1.0];
-  player.textureNum = 0;
-  player.matrix.translate(-0.25, -0.74, 0.0);
-  player.matrix.scale(0.5, 0.3, 0.5);
-  player.renderfast();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
