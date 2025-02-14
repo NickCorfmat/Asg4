@@ -5,11 +5,10 @@ var VSHADER_SOURCE = `
     attribute vec2 a_UV;
     varying vec2 v_UV;
     uniform mat4 u_ModelMatrix;
-    uniform mat4 u_GlobalRotateMatrix;
     uniform mat4 u_ViewMatrix;
     uniform mat4 u_ProjectionMatrix;
     void main() {
-      gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_GlobalRotateMatrix * u_ModelMatrix * a_Position;
+      gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
       v_UV = a_UV;
     }`;
 
@@ -51,7 +50,6 @@ let u_Size;
 let u_ModelMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
-let u_GlobalRotateMatrix;
 let u_Sampler0;
 let u_whichTexture;
 
@@ -109,15 +107,6 @@ function connectVariablesToGLSL() {
   u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
   if (!u_ModelMatrix) {
     console.log("Failed to get the storage location of u_ModelMatrix");
-    return;
-  }
-
-  u_GlobalRotateMatrix = gl.getUniformLocation(
-    gl.program,
-    "u_GlobalRotateMatrix"
-  );
-  if (!u_GlobalRotateMatrix) {
-    console.log("Failed to get the storage location of u_GlobalRotateMatrix.");
     return;
   }
 
@@ -283,13 +272,6 @@ function renderScene() {
 
   // Pass the view matrix
   gl.uniformMatrix4fv(u_ViewMatrix, false, camera.viewMat.elements);
-
-  // Pass the matrix to u_ModelMatrix attribute
-  var globalRotMat = new Matrix4();
-  // .rotate(-globalAngleX, 0, 1, 0)
-  // .rotate(-globalAngleY, 1, 0, 0);
-
-  gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
