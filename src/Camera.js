@@ -54,17 +54,19 @@ class Camera {
   }
 
   panLeft() {
-    this.panCamera(5);
+    this.pan(5);
   }
 
   panRight() {
-    this.panCamera(-5);
+    this.pan(-5);
   }
 
-  panCamera(alpha) {
+  pan(alpha) {
     let radians = (alpha * Math.PI) / 180;
     let f = new Vector3(this.at.elements);
     f.sub(this.eye).normalize();
+
+    // Camera pan calculations derived with the help of ChatGPT
 
     let cosA = Math.cos(radians);
     let sinA = Math.sin(radians);
@@ -103,6 +105,9 @@ class Camera {
     ]);
 
     this.at.set(this.eye).add(f_prime);
+
+    // End camera pan calculations
+
     this.updateMatrices();
   }
 

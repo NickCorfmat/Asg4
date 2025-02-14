@@ -58,12 +58,10 @@ let u_whichTexture;
 const textures = ["brick.jpg", "pipe.jpg", "lucky.jpg"];
 
 let map = new Map();
-let camera = new Camera();
 
-// global rotation settings
-let rotateSensitivity = 0.25;
-let globalAngleX = 0;
-let globalAngleY = 0;
+// camera settings
+let camera = new Camera();
+let rotateSensitivity = 0.15;
 
 // diagnostics
 var g_startTime = performance.now() / 1000.0;
@@ -150,13 +148,9 @@ function connectVariablesToGLSL() {
 function addActionsForHtmlUI() {
   document.addEventListener("keydown", keydown);
 
-  // Click and drag to rotate
   let isDragging = false;
-  let lastX = 0,
-    lastY = 0;
-
-  // Rotate viewport X and Y functionality developed with the help of ChatGPT.
-  // Source: https://chatgpt.com/share/67aa889f-f0b0-8004-b0ec-641a4eceac10
+  let lastX = 0;
+  let lastY = 0;
 
   canvas.addEventListener("mousedown", (ev) => {
     if (ev.button === 0) {
@@ -171,13 +165,10 @@ function addActionsForHtmlUI() {
       let deltaX = ev.clientX - lastX;
       let deltaY = ev.clientY - lastY;
 
-      globalAngleX -= deltaX * rotateSensitivity;
-      globalAngleY -= deltaY * rotateSensitivity;
+      camera.pan(deltaX * rotateSensitivity);
 
       lastX = ev.clientX;
       lastY = ev.clientY;
-
-      renderScene();
     }
   });
 
@@ -294,9 +285,9 @@ function renderScene() {
   gl.uniformMatrix4fv(u_ViewMatrix, false, camera.viewMat.elements);
 
   // Pass the matrix to u_ModelMatrix attribute
-  var globalRotMat = new Matrix4()
-    .rotate(-globalAngleX, 0, 1, 0)
-    .rotate(-globalAngleY, 1, 0, 0);
+  var globalRotMat = new Matrix4();
+  // .rotate(-globalAngleX, 0, 1, 0)
+  // .rotate(-globalAngleY, 1, 0, 0);
 
   gl.uniformMatrix4fv(u_GlobalRotateMatrix, false, globalRotMat.elements);
 
