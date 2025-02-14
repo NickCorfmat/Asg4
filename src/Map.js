@@ -59,11 +59,36 @@ class Map {
       this.block.matrix.translate(x - chunkX * 8, 0, y - chunkY * 8);
       this.block.renderfast();
       this.block.matrix.setIdentity();
+
+      // green top
+      this.block.color = [0, 0.4, 0, 1];
+      this.block.textureNum = -2;
+      this.block.matrix.translate(0, -0.74 + this.blockSize, 0);
+      this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
+      this.block.matrix.translate(x - chunkX * 8, 0, y - chunkY * 8);
+      this.block.renderfast();
+      this.block.matrix.setIdentity();
     } else if (type == -2) {
       // Lucky Block
       this.block.textureNum = 2;
       this.block.matrix.translate(0, -0.74 + 4 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
+      this.block.matrix.translate(x - chunkX * 8, 0, y - chunkY * 8);
+      this.block.renderfast();
+      this.block.matrix.setIdentity();
+
+      // top
+      this.block.color = [0.862, 0.557, 0.211, 1];
+      this.block.textureNum = -2;
+      this.block.matrix.translate(0, -0.74 + 4 * this.blockSize + 0.001, 0);
+      this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
+      this.block.matrix.translate(x - chunkX * 8, 0, y - chunkY * 8);
+      this.block.renderfast();
+      this.block.matrix.setIdentity();
+
+      // bottom
+      this.block.matrix.translate(0, -0.74 + 3.999 * this.blockSize, 0);
+      this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(x - chunkX * 8, 0, y - chunkY * 8);
       this.block.renderfast();
       this.block.matrix.setIdentity();
