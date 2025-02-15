@@ -84,8 +84,20 @@ class Map {
       this.block.textureNum = -2;
       this.block.matrix.translate(0, this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
-
       this.block.matrix.translate(x, 0, y);
+      this.block.renderfast();
+      this.block.matrix.setIdentity();
+
+      // piranha plant
+      let center = this.worldToPixel(x, y);
+      let centerX = center.x + (3 * this.blockSize) / 8;
+      let centerZ = center.y - (5 * this.blockSize) / 12;
+
+      // stem
+      let pY = 0.15 * Math.sin(g_seconds) + this.blockSize / 2;
+      this.block.color = [0.122, 0.51, 0.078, 1];
+      this.block.matrix.translate(centerX, pY, centerZ);
+      this.block.matrix.scale(this.blockSize / 4, 0.25, this.blockSize / 4);
       this.block.renderfast();
       this.block.matrix.setIdentity();
     } else if (type == -2) {
