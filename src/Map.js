@@ -4,7 +4,7 @@ class Map {
     this.blockSize = 0.3;
     this.block = new Cube();
 
-    this.layout = [
+    this.chunkLayout = [
       [3, 1, 0, 0, 0, 0, 1, 3],
       [1, 0, 0, 0, 0, 0, 0, 1],
       [0, 0, 0, 0, 0, 0, 0, 0],
@@ -14,22 +14,38 @@ class Map {
       [1, 0, 0, 0, 0, 0, 0, 1],
       [3, 1, 0, 0, 0, 0, 1, 3],
     ];
+
+    this.map = [];
+    this.initMap(4, 4);
   }
 
-  render() {
-    for (let x = 0; x < 4; x++) {
-      for (let y = 0; y < 4; y++) {
-        this.renderChunk(x, y);
+  initMap(width, height) {
+    let fullWidth = width * 8;
+    let fullHeight = height * 8;
+
+    this.map = Array.from({ length: fullWidth }, () =>
+      Array(fullHeight).fill(0)
+    );
+
+    for (let chunkX = 0; chunkX < width; chunkX++) {
+      for (let chunkY = 0; chunkY < height; chunkY++) {
+        for (let x = 0; x < 8; x++) {
+          for (let y = 0; y < 8; y++) {
+            let worldX = chunkX * 8 + x;
+            let worldY = chunkY * 8 + y;
+            this.map[worldX][worldY] = this.chunkLayout[x][y];
+          }
+        }
       }
     }
   }
 
-  renderChunk(chunkX, chunkY) {
+  render() {
     let stackHeight;
 
-    for (let x = 0; x < 8; x++) {
-      for (let y = 0; y < 8; y++) {
-        stackHeight = this.layout[x][y];
+    for (let x = 0; x < 32; x++) {
+      for (let y = 0; y < 32; y++) {
+        stackHeight = this.map[x][y];
 
         if (stackHeight > 0) {
           for (let z = 0; z < stackHeight; z++) {
@@ -41,31 +57,25 @@ class Map {
               this.blockSize
             );
 
-            let worldX = chunkX * 8 + x;
-            let worldY = chunkY * 8 + y;
-
-            this.block.matrix.translate(worldX, 0, worldY);
+            this.block.matrix.translate(x, 0, y);
             this.block.renderfast();
             this.block.matrix.setIdentity();
           }
         } else if (stackHeight < 0) {
-          this.renderSpecialBlock(x, y, chunkX, chunkY, stackHeight);
+          this.renderSpecialBlock(x, y, stackHeight);
         }
       }
     }
   }
 
-  renderSpecialBlock(x, y, chunkX, chunkY, type) {
-    let worldX = chunkX * 8 + x;
-    let worldY = chunkY * 8 + y;
-
+  renderSpecialBlock(x, y, type) {
     if (type == -1) {
       // Pipe block
       this.block.textureNum = 1;
       this.block.matrix.translate(0, 0, 0);
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
 
-      this.block.matrix.translate(worldX, 0, worldY);
+      this.block.matrix.translate(x, 0, y);
       this.block.renderfast();
       this.block.matrix.setIdentity();
 
@@ -75,7 +85,7 @@ class Map {
       this.block.matrix.translate(0, this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
 
-      this.block.matrix.translate(worldX, 0, worldY);
+      this.block.matrix.translate(x, 0, y);
       this.block.renderfast();
       this.block.matrix.setIdentity();
     } else if (type == -2) {
@@ -83,7 +93,7 @@ class Map {
       this.block.textureNum = 2;
       this.block.matrix.translate(0, 5 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
-      this.block.matrix.translate(worldX, 0, worldY);
+      this.block.matrix.translate(x, 0, y);
       this.block.renderfast();
       this.block.matrix.setIdentity();
 
@@ -92,61 +102,64 @@ class Map {
       this.block.textureNum = -2;
       this.block.matrix.translate(0, 6 * this.blockSize + 0.001, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
-      this.block.matrix.translate(worldX, 0, worldY);
+      this.block.matrix.translate(x, 0, y);
       this.block.renderfast();
       this.block.matrix.setIdentity();
 
       // bottom
       this.block.matrix.translate(0, 4.999 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
-      this.block.matrix.translate(worldX, 0, worldY);
+      this.block.matrix.translate(x, 0, y);
       this.block.renderfast();
       this.block.matrix.setIdentity();
     }
   }
 
   addBlock() {
-    console.log("add");
-    let forward = new Vector3(this.camera.at.elements);
-    forward.sub(this.camera.eye).normalize(); // Get the direction the camera is facing
-
-    // Calculate the grid position in front of the camera
-    let targetX = Math.round(this.camera.eye.x + forward.x);
-    let targetY = Math.round(this.camera.eye.z + forward.z);
-
-    console.log(targetX, targetY);
+    let location = this.pixelToWorld(
+      this.camera.eye.elements[0],
+      this.camera.eye.elements[2]
+    );
 
     if (
-      targetX >= 0 &&
-      targetX < this.layout.length &&
-      targetY >= 0 &&
-      targetY < this.layout[0].length
+      location.x >= 0 &&
+      location.x < 32 &&
+      location.y >= 0 &&
+      location.y < 32
     ) {
-      console.log(targetX, targetY);
-      this.layout[targetX][targetY] += 1; // Add a brick block on top
+      this.map[location.x][location.y] += 1;
     }
   }
 
   removeBlock() {
-    console.log("delete");
-    let forward = new Vector3(this.camera.at.elements);
-    forward.sub(this.camera.eye).normalize();
-
-    let targetX = Math.round(this.camera.eye.x + forward.x);
-    let targetY = Math.round(this.camera.eye.z + forward.z);
-
-    console.log(targetX, targetY);
+    let location = this.pixelToWorld(
+      this.camera.eye.elements[0],
+      this.camera.eye.elements[2]
+    );
 
     if (
-      targetX >= 0 &&
-      targetX < this.layout.length &&
-      targetY >= 0 &&
-      targetY < this.layout[0].length
+      location.x >= 0 &&
+      location.x < 32 &&
+      location.y >= 0 &&
+      location.y < 32
     ) {
-      console.log(targetX, targetY);
-      if (this.layout[targetX][targetY] > 0) {
-        this.layout[targetX][targetY] -= 1; // Remove the top block
+      if (this.map[location.x][location.y] > 0) {
+        this.map[location.x][location.y] -= 1;
       }
     }
+  }
+
+  pixelToWorld(pixelX, pixelY) {
+    return {
+      x: Math.floor(pixelX / this.blockSize),
+      y: Math.floor(pixelY / this.blockSize),
+    };
+  }
+
+  worldToPixel(worldX, worldY) {
+    return {
+      x: worldX * this.blockSize,
+      y: worldY * this.blockSize,
+    };
   }
 }
