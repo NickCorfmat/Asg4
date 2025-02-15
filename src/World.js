@@ -233,8 +233,6 @@ function main() {
 
   initTextures();
 
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-
   requestAnimationFrame(tick);
 }
 
@@ -289,8 +287,6 @@ function keydown(ev) {
     // G
     map.removeBlock();
   }
-
-  renderScene();
 }
 
 function renderScene() {
