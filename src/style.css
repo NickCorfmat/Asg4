@@ -32,6 +32,8 @@ p {
     white-space: pre-line;
     line-height: 150%;
     text-align: center;
+    z-index: 1001;
+    margin: 10px 0 10px 0;
 }
 
 #title {
