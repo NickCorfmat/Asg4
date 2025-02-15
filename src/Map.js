@@ -6,12 +6,12 @@ class Map {
 
     this.layout = [
       [3, 1, 1, 0, 0, 1, 1, 3],
-      [1, 0, 0, 0, 0, 0, -2, 1],
-      [1, 0, -2, 0, 0, 0, 0, 1],
-      [0, 0, 0, 2, 3, 0, 0, 0],
+      [1, 0, 0, 0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 0, 0, 0, 1],
+      [0, 0, -2, 2, 3, 0, 0, 0],
       [0, 0, 0, 0, 4, 0, 0, 0],
       [1, 0, -1, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, -2, 1],
+      [1, 0, 0, 0, 0, 0, 0, 1],
       [3, 1, 1, 0, 0, 1, 1, 3],
     ];
   }
@@ -81,7 +81,7 @@ class Map {
     } else if (type == -2) {
       // Lucky Block
       this.block.textureNum = 2;
-      this.block.matrix.translate(0, 4 * this.blockSize, 0);
+      this.block.matrix.translate(0, 5 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
       this.block.matrix.translate(worldX, 0, worldY);
       this.block.renderfast();
@@ -90,14 +90,14 @@ class Map {
       // top
       this.block.color = [0.862, 0.557, 0.211, 1];
       this.block.textureNum = -2;
-      this.block.matrix.translate(0, 5 * this.blockSize + 0.001, 0);
+      this.block.matrix.translate(0, 6 * this.blockSize + 0.001, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(worldX, 0, worldY);
       this.block.renderfast();
       this.block.matrix.setIdentity();
 
       // bottom
-      this.block.matrix.translate(0, 3.999 * this.blockSize, 0);
+      this.block.matrix.translate(0, 4.999 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(worldX, 0, worldY);
       this.block.renderfast();

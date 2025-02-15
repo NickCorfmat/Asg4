@@ -22,6 +22,7 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler2;
     uniform sampler2D u_Sampler3;
     uniform sampler2D u_Sampler4;
+    uniform sampler2D u_Sampler5;
     uniform int u_whichTexture;
     void main() {
       if (u_whichTexture == -2) {
@@ -38,6 +39,8 @@ var FSHADER_SOURCE = `
         gl_FragColor = texture2D(u_Sampler3, v_UV);   // Use texture3
       } else if (u_whichTexture == 4) {
         gl_FragColor = texture2D(u_Sampler4, v_UV);   // Use texture4
+      } else if (u_whichTexture == 5) {
+        gl_FragColor = texture2D(u_Sampler5, v_UV);   // Use texture5
       } else {
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
@@ -61,7 +64,13 @@ let camera = new Camera();
 let rotateSensitivity = 0.15;
 
 let map = new Map(camera);
-const textures = ["brick.jpg", "pipe.jpg", "lucky.jpg", "backdrop1.jpg"];
+const textures = [
+  "brick.jpg",
+  "pipe.jpg",
+  "lucky.jpg",
+  "backdrop.jpg",
+  "goomba.jpg",
+];
 
 // diagnostics
 var g_startTime = performance.now() / 1000.0;
@@ -311,17 +320,22 @@ function renderScene() {
   ground.renderfast();
 
   // world ground
-  var bird = new Cube();
+  var goomba = new Cube();
+  goomba.textureNum = 4;
   for (let i = 0; i < 6; i++) {
-    bird.color = [1, 0, 0, 1];
-    bird.matrix.scale(0.2, 0.2, 0.2);
+    let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
+    let gY = 0;
+    let gZ = i * 6 + 4;
+
+    goomba.matrix.scale(0.27, 0.27, 0.27);
     if (i % 2 == 0) {
-      bird.matrix.translate(20 * Math.cos(0.5 * g_seconds) + 20, 10, i * 7 + 3);
+      gX = 20 * Math.sin(0.25 * g_seconds) + 20;
+      goomba.matrix.translate(gX, gY, gZ);
     } else {
-      bird.matrix.translate(20 * Math.sin(0.5 * g_seconds) + 20, 10, i * 7 + 3);
+      goomba.matrix.translate(gX, gY, gZ);
     }
-    bird.renderfast();
-    bird.matrix.setIdentity();
+    goomba.renderfast();
+    goomba.matrix.setIdentity();
   }
 
   // Check the time at the end of the function, and display on web page
