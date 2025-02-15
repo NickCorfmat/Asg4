@@ -169,6 +169,7 @@ function addActionsForHtmlUI() {
       isDragging = true;
       lastX = ev.clientX;
       lastY = ev.clientY;
+      document.body.style.cursor = "none";
     }
   });
 
@@ -187,6 +188,7 @@ function addActionsForHtmlUI() {
 
   document.addEventListener("mouseup", () => {
     isDragging = false;
+    document.body.style.cursor = "default";
   });
 }
 
