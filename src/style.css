@@ -15,6 +15,22 @@ body {
     height: 100%;
 }
 
+button {
+    width: 10vw;
+    height: 45px;
+    background-color: rgb(116, 177, 108);
+    border: 6px solid rgb(140, 224, 147);
+    z-index: 1000;
+    margin-top: 5px;
+    font: inherit;
+    color: white;
+}
+
+button:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
 h1 {
     font-size: 3em;
     color: rgb(232, 250, 220);

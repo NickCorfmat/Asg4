@@ -191,8 +191,10 @@ function addActionsForHtmlUI() {
     document.body.style.cursor = "default";
   });
 
-  let audio = document.getElementById("music");
-  audio.play();
+  document.getElementById("play-button").addEventListener("click", () => {
+    let audio = document.getElementById("music");
+    audio.play();
+  });
 }
 
 function initTextures() {
