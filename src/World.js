@@ -339,9 +339,9 @@ function renderScene() {
   for (let i = 0; i < 6; i++) {
     let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
     let gY = 0;
-    let gZ = i * 6 + 4;
+    let gZ = i * 1500 + 10;
 
-    goomba.matrix.scale(0.27, 0.27, 0.27);
+    goomba.matrix.scale(0.27, 0.27, 0.001);
     if (i % 2 == 0) {
       gX = 20 * Math.sin(0.25 * g_seconds) + 20;
       goomba.matrix.translate(gX, gY, gZ);
