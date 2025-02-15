@@ -25,6 +25,7 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler5;
     uniform sampler2D u_Sampler6;
     uniform sampler2D u_Sampler7;
+    uniform sampler2D u_Sampler8;
     uniform int u_whichTexture;
     void main() {
       if (u_whichTexture == -2) {
@@ -47,6 +48,8 @@ var FSHADER_SOURCE = `
         gl_FragColor = texture2D(u_Sampler6, v_UV);   // Use texture6
       } else if (u_whichTexture == 7) {
         gl_FragColor = texture2D(u_Sampler7, v_UV);   // Use texture7
+      } else if (u_whichTexture == 8) {
+        gl_FragColor = texture2D(u_Sampler8, v_UV);   // Use texture8
       } else {
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
@@ -78,6 +81,7 @@ const textures = [
   "goomba.jpg",
   "castle.jpg",
   "princess.jpg",
+  "shell.jpg",
 ];
 
 // diagnostics
@@ -350,6 +354,25 @@ function renderScene() {
     }
     goomba.renderfast();
     goomba.matrix.setIdentity();
+  }
+
+  // shells
+  var shell = new Cube();
+  shell.textureNum = 7;
+  for (let i = 0; i < 6; i++) {
+    let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
+    let sY = 0;
+    let sZ = i * 1500 + 5;
+
+    shell.matrix.scale(0.27, 0.27, 0.001);
+    if (i % 2 == 0) {
+      sX = 20 * Math.cos(0.3 * g_seconds) + 20;
+      shell.matrix.translate(sX, sY, sZ);
+    } else {
+      shell.matrix.translate(sX, sY, sZ);
+    }
+    shell.renderfast();
+    shell.matrix.setIdentity();
   }
 
   // princess peach

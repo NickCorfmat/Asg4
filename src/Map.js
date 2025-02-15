@@ -90,14 +90,28 @@ class Map {
 
       // piranha plant
       let center = this.worldToPixel(x, y);
-      let centerX = center.x + (3 * this.blockSize) / 8;
-      let centerZ = center.y - (5 * this.blockSize) / 12;
 
       // stem
-      let pY = 0.15 * Math.sin(g_seconds) + this.blockSize / 2;
-      this.block.color = [0.122, 0.51, 0.078, 1];
-      this.block.matrix.translate(centerX, pY, centerZ);
+      let pX = center.x + (3 * this.blockSize) / 8;
+      let pZ = center.y - (3 * this.blockSize) / 8;
+      let pY = 0.15 * Math.sin(g_seconds) + this.blockSize / 6;
+      this.block.color = [1, 0.627, 0.267, 1];
+      this.block.matrix.translate(pX, pY, pZ);
       this.block.matrix.scale(this.blockSize / 4, 0.25, this.blockSize / 4);
+      let stem = new Matrix4(this.block.matrix);
+      this.block.renderfast();
+      this.block.matrix.setIdentity();
+
+      // mouth
+      this.block.color = [0, 0.659, 0, 1];
+      this.block.matrix = stem;
+      this.block.matrix.scale(this.blockSize * 10, 0.8, this.blockSize * 10);
+      this.block.matrix.translate(-this.blockSize, pY + 1, this.blockSize);
+      this.block.renderfast();
+      this.block.color = [1, 1, 1, 1];
+      this.block.matrix = stem;
+      this.block.matrix.translate(0.36, pY + 0.3, 0.05);
+      this.block.matrix.scale(this.blockSize * 0.8, 0.8, this.blockSize * 3.7);
       this.block.renderfast();
       this.block.matrix.setIdentity();
     } else if (type == -2) {
