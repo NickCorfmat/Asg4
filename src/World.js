@@ -23,6 +23,8 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler3;
     uniform sampler2D u_Sampler4;
     uniform sampler2D u_Sampler5;
+    uniform sampler2D u_Sampler6;
+    uniform sampler2D u_Sampler7;
     uniform int u_whichTexture;
     void main() {
       if (u_whichTexture == -2) {
@@ -41,6 +43,10 @@ var FSHADER_SOURCE = `
         gl_FragColor = texture2D(u_Sampler4, v_UV);   // Use texture4
       } else if (u_whichTexture == 5) {
         gl_FragColor = texture2D(u_Sampler5, v_UV);   // Use texture5
+      } else if (u_whichTexture == 6) {
+        gl_FragColor = texture2D(u_Sampler6, v_UV);   // Use texture6
+      } else if (u_whichTexture == 7) {
+        gl_FragColor = texture2D(u_Sampler7, v_UV);   // Use texture7
       } else {
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
@@ -70,6 +76,8 @@ const textures = [
   "lucky.jpg",
   "backdrop.jpg",
   "goomba.jpg",
+  "castle.jpg",
+  "princess.jpg",
 ];
 
 // diagnostics
@@ -296,7 +304,7 @@ function renderScene() {
 
   map.render();
 
-  // skybox
+  // backdrop
   var sky = new Cube();
   sky.textureNum = 3;
   sky.matrix.scale(10, 10, 10);
@@ -310,6 +318,12 @@ function renderScene() {
   sky.matrix.translate(0, 0, 0.955);
   sky.renderfast();
   sky.matrix.setIdentity();
+  sky.textureNum = 5;
+  sky.matrix.translate(0, -0.001, 0);
+  sky.matrix.scale(10, 10, 0.1);
+  sky.matrix.translate(0, 0, -4.45);
+  sky.renderfast();
+  sky.matrix.setIdentity();
 
   // world ground
   var ground = new Cube();
@@ -319,7 +333,7 @@ function renderScene() {
   ground.matrix.translate(0, 0, 0);
   ground.renderfast();
 
-  // world ground
+  // goombas
   var goomba = new Cube();
   goomba.textureNum = 4;
   for (let i = 0; i < 6; i++) {
@@ -337,6 +351,22 @@ function renderScene() {
     goomba.renderfast();
     goomba.matrix.setIdentity();
   }
+
+  // princess peach
+  let pY = 0.1 * Math.sin(4 * g_seconds) + 3.6;
+  var princess = new Cube();
+  princess.textureNum = 6;
+  princess.matrix.translate(0, pY, -0.44);
+  princess.matrix.scale(0.5, 0.5, 0.001);
+  princess.matrix.translate(8.2, 0, 0);
+  princess.renderfast();
+  princess.matrix.setIdentity();
+  princess.textureNum = -2;
+  princess.color = [0.635, 0.682, 0.996, 1.0];
+  princess.matrix.translate(0, pY + 0.4, -0.439);
+  princess.matrix.scale(0.5, 0.1, 0.002);
+  princess.matrix.translate(8.2, 0, 0);
+  princess.renderfast();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
