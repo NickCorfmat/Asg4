@@ -20,14 +20,24 @@ None
     </div>
 
     <div id="game-window">
-      <div class="column left-column">
+      <div class="column">
+        <h2>Controls:</h2>
+        <p>Movement - WASD<br>
+          Turn Left/Right - Q/E<br>
+          Look around - Click and drag<br>
+          Add/Remove Block - F/G</p>
       </div>
-      <div class="column middle-column">
-        <canvas id="webgl" width="800" height="600">
-          Please use a browser that supports "canvas"
-        </canvas>
-      </div>
-      <div class="column right-column">
+      
+      <canvas id="webgl" width="800" height="600">
+        Please use a browser that supports "canvas"
+      </canvas>
+
+      <div class="column">
+        <h2>Backstory:</h2>
+        <p>Princess Peach has been captured again!
+          Bowser has locked her in the tallest tower of his castle
+          and surrounded his fortress with a slew of his minions!
+          It is up to you to save her from his fiery oppression!</p>
       </div>
     </div>
     
@@ -39,7 +49,7 @@ None
 
     <img src="../assets/backdrop.png" class="backdrop" alt="Backdrop">
 
-    <audio autoplay loop>
+    <audio autoplay loop muted>
       <source src="../assets/music.mp3" type="audio/mpeg">
     </audio>
 
