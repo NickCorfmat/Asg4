@@ -190,6 +190,9 @@ function addActionsForHtmlUI() {
     isDragging = false;
     document.body.style.cursor = "default";
   });
+
+  let audio = document.getElementById("music");
+  audio.play();
 }
 
 function initTextures() {
