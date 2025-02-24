@@ -36,6 +36,7 @@ var FSHADER_SOURCE = `
     uniform vec3 u_lightPos;
     uniform vec3 u_cameraPos;
     varying vec4 v_VertPos;
+    uniform bool u_lightOn;
     
     void main() {
       if (u_whichTexture == -3) {
@@ -84,7 +85,14 @@ var FSHADER_SOURCE = `
 
       vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
       vec3 ambient = vec3(gl_FragColor) * 0.3;
-      gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
+
+      if (u_lightOn) {
+        if (u_whichTexture == 0) {
+          gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
+        } else {
+          gl_FragColor = vec4(diffuse + ambient, 1.0);
+        }
+      }
     }`;
 
 // Global Variables
@@ -104,6 +112,8 @@ let u_lightPos;
 let g_NormalOn = false;
 let g_lightPos = [0, 1, -2];
 let g_cameraPos;
+let u_lightOn;
+let g_lightOn = false;
 
 // camera settings
 let camera = new Camera();
@@ -179,6 +189,12 @@ function connectVariablesToGLSL() {
   u_cameraPos = gl.getUniformLocation(gl.program, "u_cameraPos");
   if (!u_cameraPos) {
     console.log("Failed to get the storage location of u_cameraPos.");
+    return;
+  }
+
+  u_lightOn = gl.getUniformLocation(gl.program, "u_lightOn");
+  if (!u_lightOn) {
+    console.log("Failed to get the storage location of u_lightOn.");
     return;
   }
 
@@ -285,6 +301,14 @@ function addActionsForHtmlUI() {
   document.getElementById("normal-off-button").addEventListener("click", () => {
     g_NormalOn = false;
   });
+
+  document.getElementById("light-on-button").addEventListener("click", () => {
+    g_lightOn = true;
+  });
+
+  document.getElementById("light-off-button").addEventListener("click", () => {
+    g_lightOn = false;
+  });
 }
 
 function initTextures() {
@@ -336,7 +360,7 @@ function main() {
 function tick() {
   g_seconds = performance.now() / 1000.0 - g_startTime;
 
-  //updateAnimations();
+  updateAnimations();
   renderScene();
   requestAnimationFrame(tick);
 }
@@ -443,6 +467,8 @@ function renderScene() {
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
 
   gl.uniform3f(u_cameraPos, camera.eye.x, camera.eye.y, camera.eye.z);
+
+  gl.uniform1i(u_lightOn, g_lightOn);
 
   let light = new Cube();
   light.color = [2, 2, 0, 1];
