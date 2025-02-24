@@ -6,6 +6,7 @@ var VSHADER_SOURCE = `
     attribute vec3 a_Normal;
     varying vec2 v_UV;
     varying vec3 v_Normal;
+    varying vec4 v_VertPos;
     uniform mat4 u_ModelMatrix;
     uniform mat4 u_ViewMatrix;
     uniform mat4 u_ProjectionMatrix;
@@ -13,6 +14,7 @@ var VSHADER_SOURCE = `
       gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
       v_UV = a_UV;
       v_Normal = a_Normal;
+      v_VertPos = u_ModelMatrix * a_Position;
     }`;
 
 // Fragment shader program
@@ -31,6 +33,9 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler7;
     uniform sampler2D u_Sampler8;
     uniform int u_whichTexture;
+    uniform vec3 u_lightPos;
+    varying vec4 v_VertPos;
+    
     void main() {
       if (u_whichTexture == -3) {
         gl_FragColor = vec4((v_Normal + 1.0) / 2.0, 1.0); // Use normal diffuse
@@ -59,6 +64,14 @@ var FSHADER_SOURCE = `
       } else {
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
+
+      vec3 lightVector = vec3(v_VertPos) - u_lightPos;
+      float r = length(lightVector);
+      if (r < 1.0) {
+        gl_FragColor = vec4(1, 0, 0, 1);
+      } else if (r < 2.0) {
+        gl_FragColor = vec4(0, 1, 0, 1);
+      }
     }`;
 
 // Global Variables
@@ -74,7 +87,9 @@ let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_Sampler0;
 let u_whichTexture;
+let u_lightPos;
 let g_NormalOn = false;
+let g_lightPos = [0, 1, -2];
 
 // camera settings
 let camera = new Camera();
@@ -141,6 +156,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_lightPos = gl.getUniformLocation(gl.program, "u_lightPos");
+  if (!u_lightPos) {
+    console.log("Failed to get the storage location of u_lightPos.");
+    return;
+  }
+
   u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
   if (!u_ModelMatrix) {
     console.log("Failed to get the storage location of u_ModelMatrix");
@@ -204,6 +225,33 @@ function addActionsForHtmlUI() {
     isDragging = false;
     document.body.style.cursor = "default";
   });
+
+  document
+    .getElementById("lightSliderX")
+    .addEventListener("mousemove", function (ev) {
+      if (ev.buttons == 1) {
+        g_lightPos[0] = this.value / 100;
+        renderScene();
+      }
+    });
+
+  document
+    .getElementById("lightSliderY")
+    .addEventListener("mousemove", function (ev) {
+      if (ev.buttons == 1) {
+        g_lightPos[1] = this.value / 100;
+        renderScene();
+      }
+    });
+
+  document
+    .getElementById("lightSliderZ")
+    .addEventListener("mousemove", function (ev) {
+      if (ev.buttons == 1) {
+        g_lightPos[2] = this.value / 100;
+        renderScene();
+      }
+    });
 
   document.getElementById("play-button").addEventListener("click", () => {
     let audio = document.getElementById("music");
@@ -366,10 +414,19 @@ function renderScene() {
   ground.matrix.translate(0, 0, 0);
   ground.render();
 
+  gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+
+  let light = new Cube();
+  light.color = [2, 2, 0, 1];
+  light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  light.matrix.scale(0.1, 0.1, 0.1);
+  light.matrix.translate(-0.5, -0.5, -0.5);
+  light.render();
+
   let sphere = new Sphere();
-  sphere.color = [0, 0, 0, 1]
+  sphere.color = [0, 0, 0, 1];
   if (g_NormalOn) sphere.textureNum = -3;
-  sphere.matrix.translate(2, 3, 2)
+  sphere.matrix.translate(2, 3, 2);
   sphere.render();
 
   // // goombas
