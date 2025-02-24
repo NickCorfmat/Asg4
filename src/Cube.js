@@ -49,15 +49,23 @@ class Cube {
   render() {
     var rgba = this.color;
 
-    gl.uniform1i(u_whichTexture, 0);
+    gl.uniform1i(u_whichTexture, this.textureNum);
     gl.uniform4f(u_FragColor, rgba[0], rgba[1], rgba[2], rgba[3]);
     gl.uniformMatrix4fv(u_ModelMatrix, false, this.matrix.elements);
 
     // Top face
-    drawTriangle3DUV([0, 0, 0, 1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 1, 0]);
-    drawTriangle3DUV([0, 0, 0, 0, 1, 0, 1, 1, 0], [0, 0, 0, 1, 1, 1]);
+    drawTriangle3DUVNormal(
+      [0, 0, 0, 1, 1, 0, 1, 0, 0],
+      [0, 0, 1, 1, 1, 0],
+      [0, 0, -1, 0, 0, -1, 0, 0, -1]
+    );
+    drawTriangle3DUVNormal(
+      [0, 0, 0, 0, 1, 0, 1, 1, 0],
+      [0, 0, 0, 1, 1, 1],
+      [0, 0, -1, 0, 0, -1, 0, 0, -1]
+    );
 
-    // fake lighting
+    // Fake lighting
     gl.uniform4f(
       u_FragColor,
       rgba[0] * 0.9,
@@ -67,24 +75,64 @@ class Cube {
     );
 
     // Front face
-    drawTriangle3D([0, 0, 0, 1, 0, 0, 1, 0, -1]);
-    drawTriangle3D([0, 0, 0, 1, 0, -1, 0, 0, -1]);
+    drawTriangle3DUVNormal(
+      [0, 0, 0, 1, 0, 0, 1, 0, -1],
+      [0, 0, 1, 0, 1, 1],
+      [0, 0, 1, 0, 0, 1, 0, 0, 1]
+    );
+    drawTriangle3DUVNormal(
+      [0, 0, 0, 1, 0, -1, 0, 0, -1],
+      [0, 0, 1, 1, 1, 1],
+      [0, 0, 1, 0, 0, 1, 0, 0, 1]
+    );
 
     // Back face
-    drawTriangle3D([0, 1, 0, 1, 1, 0, 1, 1, -1]);
-    drawTriangle3D([0, 1, 0, 1, 1, -1, 0, 1, -1]);
+    drawTriangle3DUVNormal(
+      [0, 1, 0, 1, 1, 0, 1, 1, -1],
+      [0, 0, 1, 0, 1, 1],
+      [0, 0, -1, 0, 0, -1, 0, 0, -1]
+    );
+    drawTriangle3DUVNormal(
+      [0, 1, 0, 1, 1, -1, 0, 1, -1],
+      [0, 0, 1, 1, 1, 1],
+      [0, 0, -1, 0, 0, -1, 0, 0, -1]
+    );
 
     // Left face
-    drawTriangle3D([0, 0, 0, 0, 0, -1, 0, 1, -1]);
-    drawTriangle3D([0, 0, 0, 0, 1, -1, 0, 1, 0]);
+    drawTriangle3DUVNormal(
+      [0, 0, 0, 0, 0, -1, 0, 1, -1],
+      [0, 0, 1, 0, 1, 1],
+      [-1, 0, 0, -1, 0, 0, -1, 0, 0]
+    );
+    drawTriangle3DUVNormal(
+      [0, 0, 0, 0, 1, -1, 0, 1, 0],
+      [0, 0, 1, 1, 1, 0],
+      [-1, 0, 0, -1, 0, 0, -1, 0, 0]
+    );
 
     // Right face
-    drawTriangle3D([1, 0, 0, 1, 0, -1, 1, 1, -1]);
-    drawTriangle3D([1, 0, 0, 1, 1, -1, 1, 1, 0]);
+    drawTriangle3DUVNormal(
+      [1, 0, 0, 1, 0, -1, 1, 1, -1],
+      [0, 0, 1, 0, 1, 1],
+      [1, 0, 0, 1, 0, 0, 1, 0, 0]
+    );
+    drawTriangle3DUVNormal(
+      [1, 0, 0, 1, 1, -1, 1, 1, 0],
+      [0, 0, 1, 1, 1, 0],
+      [1, 0, 0, 1, 0, 0, 1, 0, 0]
+    );
 
     // Bottom face
-    drawTriangle3D([0, 0, -1, 1, 0, -1, 1, 1, -1]);
-    drawTriangle3D([0, 0, -1, 1, 1, -1, 0, 1, -1]);
+    drawTriangle3DUVNormal(
+      [0, 0, -1, 1, 0, -1, 1, 1, -1],
+      [0, 0, 1, 0, 1, 1],
+      [0, -1, 0, 0, -1, 0, 0, -1, 0]
+    );
+    drawTriangle3DUVNormal(
+      [0, 0, -1, 1, 1, -1, 0, 1, -1],
+      [0, 0, 1, 1, 1, 1],
+      [0, -1, 0, 0, -1, 0, 0, -1, 0]
+    );
   }
 
   renderfast() {

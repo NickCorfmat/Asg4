@@ -3,19 +3,23 @@ var VSHADER_SOURCE = `
     precision mediump float;
     attribute vec4 a_Position;
     attribute vec2 a_UV;
+    attribute vec3 a_Normal;
     varying vec2 v_UV;
+    varying vec3 v_Normal;
     uniform mat4 u_ModelMatrix;
     uniform mat4 u_ViewMatrix;
     uniform mat4 u_ProjectionMatrix;
     void main() {
       gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
       v_UV = a_UV;
+      v_Normal = a_Normal;
     }`;
 
 // Fragment shader program
 var FSHADER_SOURCE = `
     precision mediump float;
     varying vec2 v_UV;
+    varying vec3 v_Normal;
     uniform vec4 u_FragColor;
     uniform sampler2D u_Sampler0;
     uniform sampler2D u_Sampler1;
@@ -28,7 +32,9 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler8;
     uniform int u_whichTexture;
     void main() {
-      if (u_whichTexture == -2) {
+      if (u_whichTexture == -3) {
+        gl_FragColor = vec4((v_Normal + 1.0) / 2.0, 1.0); // Use normal diffuse
+      } else if (u_whichTexture == -2) {
         gl_FragColor = u_FragColor;                   // Use Color
       } else if (u_whichTexture == -1) {
        gl_FragColor = vec4(v_UV, 1.0, 1.0);           // Use UV debug color
@@ -60,6 +66,7 @@ let canvas;
 let gl;
 let a_Position;
 let a_UV;
+let a_Normal;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
@@ -67,6 +74,7 @@ let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_Sampler0;
 let u_whichTexture;
+let g_NormalOn = false;
 
 // camera settings
 let camera = new Camera();
@@ -118,6 +126,12 @@ function connectVariablesToGLSL() {
   a_UV = gl.getAttribLocation(gl.program, "a_UV");
   if (a_UV < 0) {
     console.log("Failed to get the storage location of a_UV.");
+    return;
+  }
+
+  a_Normal = gl.getAttribLocation(gl.program, "a_Normal");
+  if (a_Normal < 0) {
+    console.log("Failed to get the storage location of a_Normal.");
     return;
   }
 
@@ -194,6 +208,14 @@ function addActionsForHtmlUI() {
   document.getElementById("play-button").addEventListener("click", () => {
     let audio = document.getElementById("music");
     audio.play();
+  });
+
+  document.getElementById("normal-on-button").addEventListener("click", () => {
+    g_NormalOn = true;
+  });
+
+  document.getElementById("normal-off-button").addEventListener("click", () => {
+    g_NormalOn = false;
   });
 }
 
@@ -314,35 +336,40 @@ function renderScene() {
   // backdrop
   var sky = new Cube();
   sky.textureNum = 3;
+  if (g_NormalOn) sky.textureNum = -3;
   sky.matrix.scale(10, 10, 10);
   sky.matrix.translate(0, -0.001, 0.955);
-  sky.renderfast();
+  sky.render();
   sky.matrix.setIdentity();
   sky.textureNum = -2;
+  if (g_NormalOn) sky.textureNum = -3;
   sky.color = [0.635, 0.682, 0.996, 1.0];
   sky.matrix.translate(0, 9.9, 0);
   sky.matrix.scale(10, 0.01, 10);
   sky.matrix.translate(0, 0, 0.955);
-  sky.renderfast();
+  sky.render();
   sky.matrix.setIdentity();
   sky.textureNum = 5;
+  if (g_NormalOn) sky.textureNum = -3;
   sky.matrix.translate(0, -0.001, 0);
   sky.matrix.scale(10, 10, 0.1);
   sky.matrix.translate(0, 0, -4.45);
-  sky.renderfast();
+  sky.render();
   sky.matrix.setIdentity();
 
   // world ground
   var ground = new Cube();
+  if (g_NormalOn) ground.textureNum = -3;
   ground.color = [0.478, 0.741, 0.216, 1.0];
   ground.matrix.translate(0, -0.001, 9.5);
   ground.matrix.scale(10, 0, 10);
   ground.matrix.translate(0, 0, 0);
-  ground.renderfast();
+  ground.render();
 
   // goombas
   var goomba = new Cube();
   goomba.textureNum = 4;
+  if (g_NormalOn) ground.textureNum = -3;
   for (let i = 0; i < 6; i++) {
     let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
     let gY = 0;
@@ -355,13 +382,14 @@ function renderScene() {
     } else {
       goomba.matrix.translate(gX, gY, gZ);
     }
-    goomba.renderfast();
+    goomba.render();
     goomba.matrix.setIdentity();
   }
 
   // shells
   var shell = new Cube();
   shell.textureNum = 7;
+  if (g_NormalOn) ground.textureNum = -3;
   for (let i = 0; i < 6; i++) {
     let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
     let sY = 0;
@@ -374,7 +402,7 @@ function renderScene() {
     } else {
       shell.matrix.translate(sX, sY, sZ);
     }
-    shell.renderfast();
+    shell.render();
     shell.matrix.setIdentity();
   }
 
@@ -382,17 +410,19 @@ function renderScene() {
   let pY = 0.1 * Math.sin(4 * g_seconds) + 3.6;
   var princess = new Cube();
   princess.textureNum = 6;
+  if (g_NormalOn) ground.textureNum = -3;
   princess.matrix.translate(0, pY, -0.44);
   princess.matrix.scale(0.5, 0.5, 0.001);
   princess.matrix.translate(8.2, 0, 0);
-  princess.renderfast();
+  princess.render();
   princess.matrix.setIdentity();
   princess.textureNum = -2;
+  if (g_NormalOn) ground.textureNum = -3;
   princess.color = [0.635, 0.682, 0.996, 1.0];
   princess.matrix.translate(0, pY + 0.4, -0.439);
   princess.matrix.scale(0.5, 0.1, 0.002);
   princess.matrix.translate(8.2, 0, 0);
-  princess.renderfast();
+  princess.render();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;

@@ -58,7 +58,7 @@ class Map {
             );
 
             this.block.matrix.translate(x, 0, y);
-            this.block.renderfast();
+            this.block.render();
             this.block.matrix.setIdentity();
           }
         } else if (stackHeight < 0) {
@@ -76,7 +76,7 @@ class Map {
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
 
       this.block.matrix.translate(x, 0, y);
-      this.block.renderfast();
+      this.block.render();
       this.block.matrix.setIdentity();
 
       // green top
@@ -85,7 +85,7 @@ class Map {
       this.block.matrix.translate(0, this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(x, 0, y);
-      this.block.renderfast();
+      this.block.render();
       this.block.matrix.setIdentity();
 
       // piranha plant
@@ -99,7 +99,7 @@ class Map {
       this.block.matrix.translate(pX, pY, pZ);
       this.block.matrix.scale(this.blockSize / 4, 0.25, this.blockSize / 4);
       let stem = new Matrix4(this.block.matrix);
-      this.block.renderfast();
+      this.block.render();
       this.block.matrix.setIdentity();
 
       // mouth
@@ -107,12 +107,12 @@ class Map {
       this.block.matrix = stem;
       this.block.matrix.scale(this.blockSize * 10, 0.8, this.blockSize * 10);
       this.block.matrix.translate(-this.blockSize, pY + 1, this.blockSize);
-      this.block.renderfast();
+      this.block.render();
       this.block.color = [1, 1, 1, 1];
       this.block.matrix = stem;
       this.block.matrix.translate(0.36, pY + 0.3, 0.05);
       this.block.matrix.scale(this.blockSize * 0.8, 0.8, this.blockSize * 3.7);
-      this.block.renderfast();
+      this.block.render();
       this.block.matrix.setIdentity();
     } else if (type == -2) {
       // Lucky Block
@@ -120,7 +120,7 @@ class Map {
       this.block.matrix.translate(0, 5 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
       this.block.matrix.translate(x, 0, y);
-      this.block.renderfast();
+      this.block.render();
       this.block.matrix.setIdentity();
 
       // top
@@ -129,14 +129,14 @@ class Map {
       this.block.matrix.translate(0, 6 * this.blockSize + 0.001, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(x, 0, y);
-      this.block.renderfast();
+      this.block.render();
       this.block.matrix.setIdentity();
 
       // bottom
       this.block.matrix.translate(0, 4.999 * this.blockSize, 0);
       this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
       this.block.matrix.translate(x, 0, y);
-      this.block.renderfast();
+      this.block.render();
       this.block.matrix.setIdentity();
     }
   }
