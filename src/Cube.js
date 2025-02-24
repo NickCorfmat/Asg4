@@ -65,15 +65,6 @@ class Cube {
       [0, 0, -1, 0, 0, -1, 0, 0, -1]
     );
 
-    // Fake lighting
-    gl.uniform4f(
-      u_FragColor,
-      rgba[0] * 0.9,
-      rgba[1] * 0.9,
-      rgba[2] * 0.9,
-      rgba[3]
-    );
-
     // Front face
     drawTriangle3DUVNormal(
       [0, 0, 0, 1, 0, 0, 1, 0, -1],

@@ -34,6 +34,7 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler8;
     uniform int u_whichTexture;
     uniform vec3 u_lightPos;
+    uniform vec3 u_cameraPos;
     varying vec4 v_VertPos;
     
     void main() {
@@ -65,13 +66,25 @@ var FSHADER_SOURCE = `
         gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
       }
 
-      vec3 lightVector = vec3(v_VertPos) - u_lightPos;
+      vec3 lightVector = u_lightPos - vec3(v_VertPos);
       float r = length(lightVector);
-      if (r < 1.0) {
-        gl_FragColor = vec4(1, 0, 0, 1);
-      } else if (r < 2.0) {
-        gl_FragColor = vec4(0, 1, 0, 1);
-      }
+
+      vec3 L = normalize(lightVector);
+      vec3 N = normalize(v_Normal);
+      float nDotL = max(dot(N, L), 0.0);
+
+      // Reflection
+      vec3 R = reflect(-L, N);
+
+      // Eye
+      vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
+
+      // Specular
+      float specular = pow(max(dot(E, R), 0.0), 10.0);
+
+      vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
+      vec3 ambient = vec3(gl_FragColor) * 0.3;
+      gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
     }`;
 
 // Global Variables
@@ -90,6 +103,7 @@ let u_whichTexture;
 let u_lightPos;
 let g_NormalOn = false;
 let g_lightPos = [0, 1, -2];
+let g_cameraPos;
 
 // camera settings
 let camera = new Camera();
@@ -159,6 +173,12 @@ function connectVariablesToGLSL() {
   u_lightPos = gl.getUniformLocation(gl.program, "u_lightPos");
   if (!u_lightPos) {
     console.log("Failed to get the storage location of u_lightPos.");
+    return;
+  }
+
+  u_cameraPos = gl.getUniformLocation(gl.program, "u_cameraPos");
+  if (!u_cameraPos) {
+    console.log("Failed to get the storage location of u_cameraPos.");
     return;
   }
 
@@ -316,13 +336,13 @@ function main() {
 function tick() {
   g_seconds = performance.now() / 1000.0 - g_startTime;
 
-  updateAnimations();
+  //updateAnimations();
   renderScene();
   requestAnimationFrame(tick);
 }
 
 function updateAnimations() {
-  g_lightPos[0] =  5 * Math.cos(g_seconds) + 5;
+  g_lightPos[0] =  5 * Math.cos(g_seconds / 2) + 5;
 }
 
 function handleClicks(ev) {
@@ -391,8 +411,8 @@ function renderScene() {
   var sky = new Cube();
   sky.textureNum = 3;
   if (g_NormalOn) sky.textureNum = -3;
-  sky.matrix.scale(10, 10, 10);
-  sky.matrix.translate(0, -0.001, 0.955);
+  sky.matrix.scale(-10, -10, -10);
+  sky.matrix.translate(-1, -0.999, 0.05);
   sky.render();
   sky.matrix.setIdentity();
   sky.textureNum = -2;
@@ -422,10 +442,12 @@ function renderScene() {
 
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
 
+  gl.uniform3f(u_cameraPos, camera.eye.x, camera.eye.y, camera.eye.z);
+
   let light = new Cube();
   light.color = [2, 2, 0, 1];
   light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  light.matrix.scale(0.1, 0.1, 0.1);
+  light.matrix.scale(-0.1, -0.1, -0.1);
   light.matrix.translate(-0.5, -0.5, -0.5);
   light.render();
 
