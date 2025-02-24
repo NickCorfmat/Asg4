@@ -366,63 +366,69 @@ function renderScene() {
   ground.matrix.translate(0, 0, 0);
   ground.render();
 
-  // goombas
-  var goomba = new Cube();
-  goomba.textureNum = 4;
-  if (g_NormalOn) ground.textureNum = -3;
-  for (let i = 0; i < 6; i++) {
-    let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
-    let gY = 0;
-    let gZ = i * 1500 + 10;
+  let sphere = new Sphere();
+  sphere.color = [0, 0, 0, 1]
+  if (g_NormalOn) sphere.textureNum = -3;
+  sphere.matrix.translate(2, 3, 2)
+  sphere.render();
 
-    goomba.matrix.scale(0.27, 0.27, 0.001);
-    if (i % 2 == 0) {
-      gX = 20 * Math.sin(0.25 * g_seconds) + 20;
-      goomba.matrix.translate(gX, gY, gZ);
-    } else {
-      goomba.matrix.translate(gX, gY, gZ);
-    }
-    goomba.render();
-    goomba.matrix.setIdentity();
-  }
+  // // goombas
+  // var goomba = new Cube();
+  // goomba.textureNum = 4;
+  // if (g_NormalOn) ground.textureNum = -3;
+  // for (let i = 0; i < 6; i++) {
+  //   let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
+  //   let gY = 0;
+  //   let gZ = i * 1500 + 10;
 
-  // shells
-  var shell = new Cube();
-  shell.textureNum = 7;
-  if (g_NormalOn) ground.textureNum = -3;
-  for (let i = 0; i < 6; i++) {
-    let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
-    let sY = 0;
-    let sZ = i * 1500 + 5;
+  //   goomba.matrix.scale(0.27, 0.27, 0.001);
+  //   if (i % 2 == 0) {
+  //     gX = 20 * Math.sin(0.25 * g_seconds) + 20;
+  //     goomba.matrix.translate(gX, gY, gZ);
+  //   } else {
+  //     goomba.matrix.translate(gX, gY, gZ);
+  //   }
+  //   goomba.render();
+  //   goomba.matrix.setIdentity();
+  // }
 
-    shell.matrix.scale(0.27, 0.27, 0.001);
-    if (i % 2 == 0) {
-      sX = 20 * Math.cos(0.3 * g_seconds) + 20;
-      shell.matrix.translate(sX, sY, sZ);
-    } else {
-      shell.matrix.translate(sX, sY, sZ);
-    }
-    shell.render();
-    shell.matrix.setIdentity();
-  }
+  // // shells
+  // var shell = new Cube();
+  // shell.textureNum = 7;
+  // if (g_NormalOn) ground.textureNum = -3;
+  // for (let i = 0; i < 6; i++) {
+  //   let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
+  //   let sY = 0;
+  //   let sZ = i * 1500 + 5;
 
-  // princess peach
-  let pY = 0.1 * Math.sin(4 * g_seconds) + 3.6;
-  var princess = new Cube();
-  princess.textureNum = 6;
-  if (g_NormalOn) ground.textureNum = -3;
-  princess.matrix.translate(0, pY, -0.44);
-  princess.matrix.scale(0.5, 0.5, 0.001);
-  princess.matrix.translate(8.2, 0, 0);
-  princess.render();
-  princess.matrix.setIdentity();
-  princess.textureNum = -2;
-  if (g_NormalOn) ground.textureNum = -3;
-  princess.color = [0.635, 0.682, 0.996, 1.0];
-  princess.matrix.translate(0, pY + 0.4, -0.439);
-  princess.matrix.scale(0.5, 0.1, 0.002);
-  princess.matrix.translate(8.2, 0, 0);
-  princess.render();
+  //   shell.matrix.scale(0.27, 0.27, 0.001);
+  //   if (i % 2 == 0) {
+  //     sX = 20 * Math.cos(0.3 * g_seconds) + 20;
+  //     shell.matrix.translate(sX, sY, sZ);
+  //   } else {
+  //     shell.matrix.translate(sX, sY, sZ);
+  //   }
+  //   shell.render();
+  //   shell.matrix.setIdentity();
+  // }
+
+  // // princess peach
+  // let pY = 0.1 * Math.sin(4 * g_seconds) + 3.6;
+  // var princess = new Cube();
+  // princess.textureNum = 6;
+  // if (g_NormalOn) ground.textureNum = -3;
+  // princess.matrix.translate(0, pY, -0.44);
+  // princess.matrix.scale(0.5, 0.5, 0.001);
+  // princess.matrix.translate(8.2, 0, 0);
+  // princess.render();
+  // princess.matrix.setIdentity();
+  // princess.textureNum = -2;
+  // if (g_NormalOn) ground.textureNum = -3;
+  // princess.color = [0.635, 0.682, 0.996, 1.0];
+  // princess.matrix.translate(0, pY + 0.4, -0.439);
+  // princess.matrix.scale(0.5, 0.1, 0.002);
+  // princess.matrix.translate(8.2, 0, 0);
+  // princess.render();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
