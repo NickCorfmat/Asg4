@@ -315,8 +315,14 @@ function main() {
 
 function tick() {
   g_seconds = performance.now() / 1000.0 - g_startTime;
+
+  updateAnimations();
   renderScene();
   requestAnimationFrame(tick);
+}
+
+function updateAnimations() {
+  g_lightPos[0] =  5 * Math.cos(g_seconds) + 5;
 }
 
 function handleClicks(ev) {
