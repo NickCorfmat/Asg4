@@ -8,12 +8,13 @@ var VSHADER_SOURCE = `
     varying vec3 v_Normal;
     varying vec4 v_VertPos;
     uniform mat4 u_ModelMatrix;
+    uniform mat4 u_NormalMatrix;
     uniform mat4 u_ViewMatrix;
     uniform mat4 u_ProjectionMatrix;
     void main() {
       gl_Position = u_ProjectionMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
       v_UV = a_UV;
-      v_Normal = a_Normal;
+      v_Normal = normalize(vec3(u_NormalMatrix * vec4(a_Normal, 1)));
       v_VertPos = u_ModelMatrix * a_Position;
     }`;
 
@@ -104,6 +105,7 @@ let a_Normal;
 let u_FragColor;
 let u_Size;
 let u_ModelMatrix;
+let u_NormalMatrix;
 let u_ProjectionMatrix;
 let u_ViewMatrix;
 let u_Sampler0;
@@ -204,6 +206,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_NormalMatrix = gl.getUniformLocation(gl.program, "u_NormalMatrix");
+  if (!u_NormalMatrix) {
+    console.log("Failed to get the storage location of u_NormalMatrix");
+    return;
+  }
+
   u_ViewMatrix = gl.getUniformLocation(gl.program, "u_ViewMatrix");
   if (!u_ViewMatrix) {
     console.log("Failed to get the storage location of u_ViewMatrix.");
@@ -225,6 +233,8 @@ function connectVariablesToGLSL() {
   // Set an initial value for this matrix to identity
   var identityM = new Matrix4();
   gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
+
+  gl.uniformMatrix4fv(u_NormalMatrix, false, identityM.elements);
 }
 
 // Set up actions for the HTML UI elements
@@ -443,7 +453,7 @@ function renderScene() {
   if (g_NormalOn) sky.textureNum = -3;
   sky.color = [0.635, 0.682, 0.996, 1.0];
   sky.matrix.translate(0, 9.9, 0);
-  sky.matrix.scale(10, 0.01, 10);
+  sky.matrix.scale(-10, 0.01, 10);
   sky.matrix.translate(0, 0, 0.955);
   sky.render();
   sky.matrix.setIdentity();
@@ -483,25 +493,26 @@ function renderScene() {
   sphere.matrix.translate(2, 3, 2);
   sphere.render();
 
-  // // goombas
-  // var goomba = new Cube();
-  // goomba.textureNum = 4;
-  // if (g_NormalOn) ground.textureNum = -3;
-  // for (let i = 0; i < 6; i++) {
-  //   let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
-  //   let gY = 0;
-  //   let gZ = i * 1500 + 10;
+  // goombas
+  var goomba = new Cube();
+  goomba.textureNum = 4;
+  if (g_NormalOn) ground.textureNum = -3;
+  for (let i = 0; i < 6; i++) {
+    let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
+    let gY = 0;
+    let gZ = i * 1500 + 10;
 
-  //   goomba.matrix.scale(0.27, 0.27, 0.001);
-  //   if (i % 2 == 0) {
-  //     gX = 20 * Math.sin(0.25 * g_seconds) + 20;
-  //     goomba.matrix.translate(gX, gY, gZ);
-  //   } else {
-  //     goomba.matrix.translate(gX, gY, gZ);
-  //   }
-  //   goomba.render();
-  //   goomba.matrix.setIdentity();
-  // }
+    goomba.matrix.scale(0.27, 0.27, 0.001);
+    if (i % 2 == 0) {
+      gX = 20 * Math.sin(0.25 * g_seconds) + 20;
+      goomba.matrix.translate(gX, gY, gZ);
+    } else {
+      goomba.matrix.translate(gX, gY, gZ);
+    }
+    //goomba.normalMatrix.setInverseOf(goomba.matrix).transpose();
+    goomba.render();
+    goomba.matrix.setIdentity();
+  }
 
   // // shells
   // var shell = new Cube();
