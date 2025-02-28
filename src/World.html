@@ -15,37 +15,37 @@ None
   </head>
 
   <body onload="main()">
-    <!-- <div id="title">
+    <div id="title">
       <h1>Super Blocky World!</h1>
-    </div> -->
+    </div>
 
     <div id="game-window">
       <div class="column">
-        <h2>Controls:</h2>
-        <p>Movement - WASD<br>
-          Turn Left/Right - Q/E<br>
-          Look around - Click and drag<br>
-          Add/Remove Block - F/G</p>
-
-        <br>
-        <button id="play-button">Play Music</button>
-        <br><br>
+        <div class="controls">
+          <h2>Controls:</h2>
+          <p>Movement - WASD<br>
+            Turn Left/Right - Q/E<br>
+            Look around - Click and drag<br>
+            Add/Remove Block - F/G</p>
+        </div>
+        <div class="settings">
+          <button id="play-button">Play Music</button>
+          <br>
         
-        <button id="normal-on-button">Normal On</button>
-        <button id="normal-off-button">Normal Off</button>
+          <button id="normal-on-button">Normal On</button>
+          <button id="normal-off-button">Normal Off</button>
 
-        <br>
+          <br>
 
-        <button id="light-on-button">Light On</button>
-        <button id="light-off-button">Light Off</button>
+          <button id="light-on-button">Light On</button>
+          <button id="light-off-button">Light Off</button>
 
-        <p>
-          Light X <input type="range" min="0" max="1000" value="500" class="slider" id="lightSliderX">
-          Light Y <input type="range" min="0" max="1000" value="500" class="slider" id="lightSliderY">
-          Light Z <input type="range" min="0" max="1000" value="500" class="slider" id="lightSliderZ">
-        </p>
-      </div>
-      </div>
+          <p>
+            Light X <input type="range" min="0" max="1000" value="500" class="slider" id="lightSliderX">
+            Light Y <input type="range" min="0" max="1000" value="500" class="slider" id="lightSliderY">
+            Light Z <input type="range" min="0" max="1000" value="500" class="slider" id="lightSliderZ">
+          </p>
+        </div>
       </div>
       
       <canvas id="webgl" width="800" height="600">
@@ -63,16 +63,14 @@ None
     
     <p id="numdot"> XXX </p>
     
-    <!-- <img src="../assets/pipe.png" class="pipe pipe-left" alt="Pipe">
+    <img src="../assets/pipe.png" class="pipe pipe-left" alt="Pipe">
     <img src="../assets/pipe.png" class="pipe pipe-right" alt="Pipe">
 
     <img src="../assets/backdrop.png" class="backdrop" alt="Backdrop">
 
     <audio id="music" loop>
       <source src="../assets/music.mp3" type="audio/mpeg">
-    </audio> -->
-
-
+    </audio>
 
     <script src="../lib/webgl-utils.js"></script>
     <script src="../lib/webgl-debug.js"></script>
@@ -86,6 +84,8 @@ None
     <script src="Cone.js"></script>
     <script src="Camera.js"></script>
     <script src="Map.js"></script>
+    <script src="PageSetup.js"></script>
+    <script src="WebgLSetup.js"></script>
     <script src="World.js"></script>
   </body>
 </html>

@@ -115,7 +115,7 @@ let g_NormalOn = false;
 let g_lightPos = [0, 1, -2];
 let g_cameraPos;
 let u_lightOn;
-let g_lightOn = false;
+let g_lightOn = true;
 
 // camera settings
 let camera = new Camera();
@@ -136,223 +136,6 @@ const textures = [
 // diagnostics
 var g_startTime = performance.now() / 1000.0;
 var g_seconds = performance.now() / 1000.0 - g_startTime;
-
-function setupWebGL() {
-  // Retrieve <canvas> element
-  canvas = document.getElementById("webgl");
-
-  // Retrieve WebGl rendering context
-  gl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
-  if (!gl) {
-    console.log("Failed to get WebGL context.");
-    return;
-  }
-
-  gl.enable(gl.DEPTH_TEST);
-}
-
-function connectVariablesToGLSL() {
-  // Initialize shaders (compile + install shaders)
-  if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
-    console.log("Failed to initialize shaders.");
-    return;
-  }
-
-  a_Position = gl.getAttribLocation(gl.program, "a_Position");
-  if (a_Position < 0) {
-    console.log("Failed to get the storage location of a_Position.");
-    return;
-  }
-
-  a_UV = gl.getAttribLocation(gl.program, "a_UV");
-  if (a_UV < 0) {
-    console.log("Failed to get the storage location of a_UV.");
-    return;
-  }
-
-  a_Normal = gl.getAttribLocation(gl.program, "a_Normal");
-  if (a_Normal < 0) {
-    console.log("Failed to get the storage location of a_Normal.");
-    return;
-  }
-
-  u_FragColor = gl.getUniformLocation(gl.program, "u_FragColor");
-  if (!u_FragColor) {
-    console.log("Failed to get the storage location of u_FragColor.");
-    return;
-  }
-
-  u_lightPos = gl.getUniformLocation(gl.program, "u_lightPos");
-  if (!u_lightPos) {
-    console.log("Failed to get the storage location of u_lightPos.");
-    return;
-  }
-
-  u_cameraPos = gl.getUniformLocation(gl.program, "u_cameraPos");
-  if (!u_cameraPos) {
-    console.log("Failed to get the storage location of u_cameraPos.");
-    return;
-  }
-
-  u_lightOn = gl.getUniformLocation(gl.program, "u_lightOn");
-  if (!u_lightOn) {
-    console.log("Failed to get the storage location of u_lightOn.");
-    return;
-  }
-
-  u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
-  if (!u_ModelMatrix) {
-    console.log("Failed to get the storage location of u_ModelMatrix");
-    return;
-  }
-
-  u_NormalMatrix = gl.getUniformLocation(gl.program, "u_NormalMatrix");
-  if (!u_NormalMatrix) {
-    console.log("Failed to get the storage location of u_NormalMatrix");
-    return;
-  }
-
-  u_ViewMatrix = gl.getUniformLocation(gl.program, "u_ViewMatrix");
-  if (!u_ViewMatrix) {
-    console.log("Failed to get the storage location of u_ViewMatrix.");
-    return;
-  }
-
-  u_ProjectionMatrix = gl.getUniformLocation(gl.program, "u_ProjectionMatrix");
-  if (!u_ProjectionMatrix) {
-    console.log("Failed to get the storage location of u_ProjectionMatrix.");
-    return;
-  }
-
-  u_whichTexture = gl.getUniformLocation(gl.program, "u_whichTexture");
-  if (!u_whichTexture) {
-    console.log("Failed to get the storage location of u_whichTexture.");
-    return;
-  }
-
-  // Set an initial value for this matrix to identity
-  var identityM = new Matrix4();
-  gl.uniformMatrix4fv(u_ModelMatrix, false, identityM.elements);
-
-  gl.uniformMatrix4fv(u_NormalMatrix, false, identityM.elements);
-}
-
-// Set up actions for the HTML UI elements
-function addActionsForHtmlUI() {
-  document.addEventListener("keydown", keydown);
-
-  let isDragging = false;
-  let lastX = 0;
-  let lastY = 0;
-
-  canvas.addEventListener("mousedown", (ev) => {
-    if (ev.button === 0) {
-      isDragging = true;
-      lastX = ev.clientX;
-      lastY = ev.clientY;
-      document.body.style.cursor = "none";
-    }
-  });
-
-  document.addEventListener("mousemove", (ev) => {
-    if (isDragging) {
-      let deltaX = ev.clientX - lastX;
-      let deltaY = ev.clientY - lastY;
-
-      camera.pan(deltaX * rotateSensitivity);
-      camera.tilt(-deltaY * rotateSensitivity);
-
-      lastX = ev.clientX;
-      lastY = ev.clientY;
-    }
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-    document.body.style.cursor = "default";
-  });
-
-  document
-    .getElementById("lightSliderX")
-    .addEventListener("mousemove", function (ev) {
-      if (ev.buttons == 1) {
-        g_lightPos[0] = this.value / 100;
-        renderScene();
-      }
-    });
-
-  document
-    .getElementById("lightSliderY")
-    .addEventListener("mousemove", function (ev) {
-      if (ev.buttons == 1) {
-        g_lightPos[1] = this.value / 100;
-        renderScene();
-      }
-    });
-
-  document
-    .getElementById("lightSliderZ")
-    .addEventListener("mousemove", function (ev) {
-      if (ev.buttons == 1) {
-        g_lightPos[2] = this.value / 100;
-        renderScene();
-      }
-    });
-
-  document.getElementById("play-button").addEventListener("click", () => {
-    let audio = document.getElementById("music");
-    audio.play();
-  });
-
-  document.getElementById("normal-on-button").addEventListener("click", () => {
-    g_NormalOn = true;
-  });
-
-  document.getElementById("normal-off-button").addEventListener("click", () => {
-    g_NormalOn = false;
-  });
-
-  document.getElementById("light-on-button").addEventListener("click", () => {
-    g_lightOn = true;
-  });
-
-  document.getElementById("light-off-button").addEventListener("click", () => {
-    g_lightOn = false;
-  });
-}
-
-function initTextures() {
-  for (let i = 0; i < textures.length; i++) {
-    let image = new Image();
-    if (!image) {
-      console.log("Failed to create the image object");
-      return false;
-    }
-
-    image.onload = function () {
-      sendTextureToGLSL(image, i);
-    };
-
-    image.src = `../assets/${textures[i]}`;
-  }
-
-  return true;
-}
-
-function sendTextureToGLSL(image, index) {
-  var texture = gl.createTexture();
-  if (!texture) {
-    console.log("Failed to create the texture object");
-    return false;
-  }
-
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-  gl.activeTexture(gl["TEXTURE" + index]);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
-  gl.uniform1i(gl.getUniformLocation(gl.program, "u_Sampler" + index), index);
-}
 
 function main() {
   // Set up canvas and gl variables
@@ -377,25 +160,6 @@ function tick() {
 
 function updateAnimations() {
   g_lightPos[0] =  5 * Math.cos(g_seconds / 2) + 5;
-}
-
-function handleClicks(ev) {
-  // Extract the event click and return it in WebGL coordinates
-  let [x, y] = convertCoordinatesEventToGL(ev);
-
-  // Draw every shape that is supposed to be in the canvas
-  renderScene();
-}
-
-function convertCoordinatesEventToGL(ev) {
-  var x = ev.clientX;
-  var y = ev.clientY;
-  var rect = ev.target.getBoundingClientRect();
-
-  x = (x - rect.left - canvas.width / 2) / (canvas.width / 2);
-  y = (canvas.height / 2 - (y - rect.top)) / (canvas.height / 2);
-
-  return [x, y];
 }
 
 function keydown(ev) {
@@ -448,22 +212,22 @@ function renderScene() {
   sky.matrix.scale(-10, -10, -10);
   sky.matrix.translate(-1, -0.999, 0.05);
   sky.render();
-  sky.matrix.setIdentity();
-  sky.textureNum = -2;
-  if (g_NormalOn) sky.textureNum = -3;
-  sky.color = [0.635, 0.682, 0.996, 1.0];
-  sky.matrix.translate(0, 9.9, 0);
-  sky.matrix.scale(-10, 0.01, 10);
-  sky.matrix.translate(0, 0, 0.955);
-  sky.render();
-  sky.matrix.setIdentity();
-  sky.textureNum = 5;
-  if (g_NormalOn) sky.textureNum = -3;
-  sky.matrix.translate(0, -0.001, 0);
-  sky.matrix.scale(10, 10, 0.1);
-  sky.matrix.translate(0, 0, -4.45);
-  sky.render();
-  sky.matrix.setIdentity();
+  // sky.matrix.setIdentity();
+  // sky.textureNum = -2;
+  // if (g_NormalOn) sky.textureNum = -3;
+  // sky.color = [0.635, 0.682, 0.996, 1.0];
+  // sky.matrix.translate(0, 9.9, 0);
+  // sky.matrix.scale(-10, 0.01, 10);
+  // sky.matrix.translate(0, 0, 0.955);
+  // sky.render();
+  // sky.matrix.setIdentity();
+  // sky.textureNum = 5;
+  // if (g_NormalOn) sky.textureNum = -3;
+  // sky.matrix.translate(0, -0.001, 0);
+  // sky.matrix.scale(10, 10, 0.1);
+  // sky.matrix.translate(0, 0, -4.45);
+  // sky.render();
+  // sky.matrix.setIdentity();
 
   // world ground
   var ground = new Cube();
@@ -560,14 +324,4 @@ function renderScene() {
     `ms: ${Math.floor(duration)} fps: ${Math.floor(fps)}`,
     "numdot"
   );
-}
-
-function sendTextToHTML(text, htmlID) {
-  var htmlElm = document.getElementById(htmlID);
-  if (!htmlElm) {
-    console.log("Failed to get " + htmlID + " from HTML.");
-    return;
-  }
-
-  htmlElm.innerHTML = text;
 }

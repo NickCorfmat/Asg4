@@ -47,6 +47,20 @@ class Cube {
     ]);
   }
 
+  initBuffers() {
+    this.vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.cubeVerts32, gl.STATIC_DRAW);
+
+    this.uvBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.cubeUVs, gl.STATIC_DRAW);
+
+    this.indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.indices, gl.STATIC_DRAW);
+  }
+
   render() {
     var rgba = this.color;
 
@@ -56,37 +70,37 @@ class Cube {
 
     // Top face
     drawTriangle3DUVNormal(
-      [0, 0, 0, 1, 1, 0, 1, 0, 0],
-      [0, 0, 1, 1, 1, 0],
-      [0, 0, -1, 0, 0, -1, 0, 0, -1]
+      [0, 0, 0, 1, 0, 0, 1, 0, -1],
+      [0, 1, 0, 0, 1, 0],
+      [0, 0, 1, 0, 0, 1, 0, 0, 1]
     );
     drawTriangle3DUVNormal(
-      [0, 0, 0, 0, 1, 0, 1, 1, 0],
-      [0, 0, 0, 1, 1, 1],
-      [0, 0, -1, 0, 0, -1, 0, 0, -1]
+      [0, 0, 0, 1, 0, -1, 0, 0, -1], 
+      [0, 1, 1, 0, 1, 1],
+      [0, 0, 1, 0, 0, 1, 0, 0, 1]
     );
 
     // Front face
     drawTriangle3DUVNormal(
-      [0, 0, 0, 1, 0, 0, 1, 0, -1],
-      [0, 0, 1, 0, 1, 1],
-      [0, 0, 1, 0, 0, 1, 0, 0, 1]
+      [0, 0, 0, 1, 1, 0, 1, 0, 0],
+      [0, 1, 1, 0, 1, 1],
+      [0, 0, -1, 0, 0, -1, 0, 0, -1]
     );
     drawTriangle3DUVNormal(
-      [0, 0, 0, 1, 0, -1, 0, 0, -1],
-      [0, 0, 1, 1, 1, 1],
-      [0, 0, 1, 0, 0, 1, 0, 0, 1]
+      [0, 0, 0, 0, 1, 0, 1, 1, 0],
+      [0, 1, 0, 0, 1, 0],
+      [0, 0, -1, 0, 0, -1, 0, 0, -1]
     );
 
     // Back face
     drawTriangle3DUVNormal(
       [0, 1, 0, 1, 1, 0, 1, 1, -1],
-      [0, 0, 1, 0, 1, 1],
+      [0, 1, 1, 0, 1, 1],
       [0, 0, -1, 0, 0, -1, 0, 0, -1]
     );
     drawTriangle3DUVNormal(
       [0, 1, 0, 1, 1, -1, 0, 1, -1],
-      [0, 0, 1, 1, 1, 1],
+      [0, 1, 0, 0, 1, 0],
       [0, 0, -1, 0, 0, -1, 0, 0, -1]
     );
 
