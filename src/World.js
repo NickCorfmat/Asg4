@@ -35,6 +35,7 @@ var FSHADER_SOURCE = `
     uniform sampler2D u_Sampler8;
     uniform int u_whichTexture;
     uniform vec3 u_lightPos;
+    uniform vec3 u_lightColor;
     uniform vec3 u_cameraPos;
     varying vec4 v_VertPos;
     uniform bool u_lightOn;
@@ -84,8 +85,8 @@ var FSHADER_SOURCE = `
       // Specular
       float specular = pow(max(dot(E, R), 0.0), 10.0);
 
-      vec3 diffuse = vec3(gl_FragColor) * nDotL * 0.7;
-      vec3 ambient = vec3(gl_FragColor) * 0.3;
+      vec3 diffuse = vec3(gl_FragColor) * u_lightColor * nDotL * 0.7;
+      vec3 ambient = vec3(gl_FragColor) * u_lightColor * 0.3;
 
       if (u_lightOn) {
         if (u_whichTexture == 0) {
@@ -112,10 +113,13 @@ let u_Sampler0;
 let u_whichTexture;
 let u_lightPos;
 let g_NormalOn = false;
-let g_lightPos = [0, 1, -2];
-let g_cameraPos;
+let g_lightPos = [4.6, 6, 4.6];
+let g_lightColor = [1, 1, 1];
+let u_lightColor;
+let u_cameraPos;
 let u_lightOn;
 let g_lightOn = true;
+let animateLight = true;
 
 // camera settings
 let camera = new Camera();
@@ -159,7 +163,11 @@ function tick() {
 }
 
 function updateAnimations() {
-  g_lightPos[0] =  5 * Math.cos(g_seconds / 2) + 5;
+  if (animateLight) {
+    g_lightPos[0] = 3 * Math.cos(g_seconds / 2) + 5;
+    g_lightPos[1] = 6;
+    g_lightPos[2] = 3 * Math.sin(g_seconds / 2) + 5;
+  }
 }
 
 function keydown(ev) {
@@ -239,6 +247,7 @@ function renderScene() {
   ground.render();
 
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  gl.uniform3f(u_lightColor, g_lightColor[0], g_lightColor[1], g_lightColor[2]);
 
   gl.uniform3f(u_cameraPos, camera.eye.x, camera.eye.y, camera.eye.z);
 
@@ -247,15 +256,15 @@ function renderScene() {
   let light = new Cube();
   light.color = [2, 2, 0, 1];
   light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  light.matrix.scale(-0.1, -0.1, -0.1);
-  light.matrix.translate(-0.5, -0.5, -0.5);
+  light.matrix.scale(-0.2, -0.2, -0.2);
   light.render();
 
-  let sphere = new Sphere();
-  sphere.color = [0, 0, 0, 1];
-  if (g_NormalOn) sphere.textureNum = -3;
-  sphere.matrix.translate(2, 3, 2);
-  sphere.render();
+  // let sphere = new Sphere();
+  // sphere.color = [0, 0, 0, 1];
+  // if (g_NormalOn) sphere.textureNum = -3;
+  // sphere.matrix.translate(4.6, 4.6, 4.6);
+  // sphere.matrix.scale(0.5, 0.5, 0.5)
+  // sphere.render();
 
   // goombas
   var goomba = new Cube();

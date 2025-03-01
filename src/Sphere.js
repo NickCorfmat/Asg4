@@ -42,7 +42,7 @@ class Sphere {
         ];
 
         let uv1 = [t / Math.PI, r / (2 * Math.PI)];
-        let uv2 = [(t + dd) / Math.PI, r/(2 * Math.PI)];
+        let uv2 = [(t + dd) / Math.PI, r / (2 * Math.PI)];
         let uv3 = [t / Math.PI, (r + dd) / (2 * Math.PI)];
         let uv4 = [(t + dd) / Math.PI, (r + dd) / (2 * Math.PI)];
 
@@ -56,7 +56,7 @@ class Sphere {
         v = v.concat(p4);
         uv = uv.concat(uv4);
 
-        gl.uniform4f(u_FragColor, 1, 1, 1, 1);
+        gl.uniform4f(u_FragColor, 0, 1, 0, 1);
         drawTriangle3DUVNormal(v, uv, v);
 
         v = [];
@@ -68,7 +68,7 @@ class Sphere {
         v = v.concat(p3);
         uv = uv.concat(uv3);
 
-        gl.uniform4f(u_FragColor, 1, 0, 0, 1);
+        gl.uniform4f(u_FragColor, 0, 1, 0, 1);
         drawTriangle3DUVNormal(v, uv, v);
       }
     }
