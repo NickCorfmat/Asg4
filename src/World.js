@@ -89,11 +89,7 @@ var FSHADER_SOURCE = `
       vec3 ambient = vec3(gl_FragColor) * u_lightColor * 0.3;
 
       if (u_lightOn) {
-        if (u_whichTexture >= 0) {
-          gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
-        } else {
-          gl_FragColor = vec4(diffuse + ambient, 1.0);
-        }
+        gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
       }
     }`;
 
@@ -259,12 +255,12 @@ function renderScene() {
   light.matrix.scale(-0.2, -0.2, -0.2);
   light.render();
 
-  // let sphere = new Sphere();
-  // sphere.color = [0, 0, 0, 1];
-  // if (g_NormalOn) sphere.textureNum = -3;
-  // sphere.matrix.translate(4.6, 4.6, 4.6);
-  // sphere.matrix.scale(0.5, 0.5, 0.5)
-  // sphere.render();
+  let sphere = new Sphere();
+  sphere.color = [0, 0, 0, 1];
+  if (g_NormalOn) sphere.textureNum = -3;
+  sphere.matrix.translate(4.6, 4.6, 4.6);
+  sphere.matrix.scale(0.5, 0.5, 0.5)
+  sphere.render();
 
   // goombas
   var goomba = new Cube();
