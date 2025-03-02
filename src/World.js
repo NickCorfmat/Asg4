@@ -210,31 +210,30 @@ function renderScene() {
   map.render();
 
   // backdrop
-  var sky = new Cube();
+  let sky = new Cube();
   sky.textureNum = 3;
   if (g_NormalOn) sky.textureNum = -3;
   sky.matrix.scale(-10, -10, -10);
   sky.matrix.translate(-1, -0.999, 0.05);
   sky.render();
-  // sky.matrix.setIdentity();
-  // sky.textureNum = -2;
-  // if (g_NormalOn) sky.textureNum = -3;
-  // sky.color = [0.635, 0.682, 0.996, 1.0];
-  // sky.matrix.translate(0, 9.9, 0);
-  // sky.matrix.scale(-10, 0.01, 10);
-  // sky.matrix.translate(0, 0, 0.955);
-  // sky.render();
-  // sky.matrix.setIdentity();
-  // sky.textureNum = 5;
-  // if (g_NormalOn) sky.textureNum = -3;
-  // sky.matrix.translate(0, -0.001, 0);
-  // sky.matrix.scale(10, 10, 0.1);
-  // sky.matrix.translate(0, 0, -4.45);
-  // sky.render();
-  // sky.matrix.setIdentity();
+  sky.matrix.setIdentity();
+  sky.textureNum = -2;
+  if (g_NormalOn) sky.textureNum = -3;
+  sky.color = [0.635, 0.682, 0.996, 1.0];
+  sky.matrix.scale(-10, 0.1, -10);
+  sky.matrix.translate(-1, 99, 0.05);
+  sky.render();
+  sky.matrix.setIdentity();
+  sky.textureNum = 5;
+  if (g_NormalOn) sky.textureNum = -3;
+  sky.matrix.translate(0, -0.001, 0);
+  sky.matrix.scale(-10, -10, 0.1);
+  sky.matrix.translate(-1, -1, -4.5);
+  sky.render();
+  sky.matrix.setIdentity();
 
   // world ground
-  var ground = new Cube();
+  let ground = new Cube();
   if (g_NormalOn) ground.textureNum = -3;
   ground.color = [0.478, 0.741, 0.216, 1.0];
   ground.matrix.translate(0, -0.001, 9.5);
@@ -255,15 +254,23 @@ function renderScene() {
   light.matrix.scale(-0.2, -0.2, -0.2);
   light.render();
 
+  // Primitive Objects
   let sphere = new Sphere();
   sphere.color = [0, 0, 0, 1];
   if (g_NormalOn) sphere.textureNum = -3;
-  sphere.matrix.translate(4.6, 4.6, 4.6);
-  sphere.matrix.scale(0.5, 0.5, 0.5)
+  sphere.matrix.translate(4.6, 4.6, 3);
+  sphere.matrix.scale(0.5, 0.5, 0.5);
   sphere.render();
 
+  let cube = new Cube();
+  cube.color = [0, 0, 1, 1];
+  if (g_NormalOn) cube.textureNum = -3;
+  cube.matrix.translate(4.6, 4.4, 6);
+  cube.matrix.scale(0.8, 0.8, 0.8);
+  cube.render();
+
   // goombas
-  var goomba = new Cube();
+  let goomba = new Cube();
   goomba.textureNum = 4;
   if (g_NormalOn) ground.textureNum = -3;
   for (let i = 0; i < 6; i++) {
@@ -283,29 +290,29 @@ function renderScene() {
     goomba.matrix.setIdentity();
   }
 
-  // // shells
-  // var shell = new Cube();
-  // shell.textureNum = 7;
-  // if (g_NormalOn) ground.textureNum = -3;
-  // for (let i = 0; i < 6; i++) {
-  //   let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
-  //   let sY = 0;
-  //   let sZ = i * 1500 + 5;
+  // shells
+  let shell = new Cube();
+  shell.textureNum = 7;
+  if (g_NormalOn) ground.textureNum = -3;
+  for (let i = 0; i < 6; i++) {
+    let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
+    let sY = 0;
+    let sZ = i * 1500 + 5;
 
-  //   shell.matrix.scale(0.27, 0.27, 0.001);
-  //   if (i % 2 == 0) {
-  //     sX = 20 * Math.cos(0.3 * g_seconds) + 20;
-  //     shell.matrix.translate(sX, sY, sZ);
-  //   } else {
-  //     shell.matrix.translate(sX, sY, sZ);
-  //   }
-  //   shell.render();
-  //   shell.matrix.setIdentity();
-  // }
+    shell.matrix.scale(0.27, 0.27, 0.001);
+    if (i % 2 == 0) {
+      sX = 20 * Math.cos(0.3 * g_seconds) + 20;
+      shell.matrix.translate(sX, sY, sZ);
+    } else {
+      shell.matrix.translate(sX, sY, sZ);
+    }
+    shell.render();
+    shell.matrix.setIdentity();
+  }
 
   // // princess peach
   // let pY = 0.1 * Math.sin(4 * g_seconds) + 3.6;
-  // var princess = new Cube();
+  // let princess = new Cube();
   // princess.textureNum = 6;
   // if (g_NormalOn) ground.textureNum = -3;
   // princess.matrix.translate(0, pY, -0.44);
