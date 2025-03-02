@@ -69,76 +69,96 @@ class Map {
   }
 
   renderSpecialBlock(x, y, type) {
-    // if (type == -1) {
-    //   // Pipe block
-    //   this.block.textureNum = 1;
-    //   this.block.matrix.translate(0, 0, 0);
-    //   this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
+    if (type == -1) {
+      // Pipe block
+      this.block.textureNum = 1;
+      this.block.matrix.translate(0, 0, 0);
+      this.block.matrix.scale(
+        -this.blockSize,
+        -this.blockSize,
+        -this.blockSize
+      );
 
-    //   this.block.matrix.translate(x, 0, y);
-    //   this.block.render();
-    //   this.block.matrix.setIdentity();
+      this.block.matrix.translate(-x - 1, -1, -y + 1);
+      this.block.render();
+      this.block.matrix.setIdentity();
 
-    //   // green top
-    //   this.block.color = [0, 0.4, 0, 1];
-    //   this.block.textureNum = -2;
-    //   this.block.matrix.translate(0, this.blockSize, 0);
-    //   this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
-    //   this.block.matrix.translate(x, 0, y);
-    //   this.block.render();
-    //   this.block.matrix.setIdentity();
+      // green top
+      this.block.color = [0, 0.4, 0, 1];
+      this.block.textureNum = -2;
+      this.block.matrix.translate(0, this.blockSize, 0);
+      this.block.matrix.scale(-this.blockSize, -0.001, -this.blockSize);
+      this.block.matrix.translate(-x - 1, -1, -y + 1);
+      this.block.render();
+      this.block.matrix.setIdentity();
 
-    //   // piranha plant
-    //   let center = this.worldToPixel(x, y);
+      // piranha plant
+      let center = this.worldToPixel(x, y);
 
-    //   // stem
-    //   let pX = center.x + (3 * this.blockSize) / 8;
-    //   let pZ = center.y - (3 * this.blockSize) / 8;
-    //   let pY = 0.15 * Math.sin(g_seconds) + this.blockSize / 6;
-    //   this.block.color = [1, 0.627, 0.267, 1];
-    //   this.block.matrix.translate(pX, pY, pZ);
-    //   this.block.matrix.scale(this.blockSize / 4, 0.25, this.blockSize / 4);
-    //   let stem = new Matrix4(this.block.matrix);
-    //   this.block.render();
-    //   this.block.matrix.setIdentity();
+      // stem
+      let pX = center.x + (3 * this.blockSize) / 8 + 0.07;
+      let pZ = center.y - (3 * this.blockSize) / 8 - 0.09;
+      let pY = 0.15 * Math.sin(g_seconds) + this.blockSize / 6 + 0.3;
+      this.block.color = [1, 0.627, 0.267, 1];
+      this.block.matrix.translate(pX, pY, pZ);
+      this.block.matrix.scale(
+        -(this.blockSize / 4),
+        -0.25,
+        -(this.blockSize / 4)
+      );
+      let stem = new Matrix4(this.block.matrix);
+      this.block.render();
+      this.block.matrix.setIdentity();
 
-    //   // mouth
-    //   this.block.color = [0, 0.659, 0, 1];
-    //   this.block.matrix = stem;
-    //   this.block.matrix.scale(this.blockSize * 10, 0.8, this.blockSize * 10);
-    //   this.block.matrix.translate(-this.blockSize, pY + 1, this.blockSize);
-    //   this.block.render();
-    //   this.block.color = [1, 1, 1, 1];
-    //   this.block.matrix = stem;
-    //   this.block.matrix.translate(0.36, pY + 0.3, 0.05);
-    //   this.block.matrix.scale(this.blockSize * 0.8, 0.8, this.blockSize * 3.7);
-    //   this.block.render();
-    //   this.block.matrix.setIdentity();
-    // } else if (type == -2) {
-    //   // Lucky Block
-    //   this.block.textureNum = 2;
-    //   this.block.matrix.translate(0, 5 * this.blockSize, 0);
-    //   this.block.matrix.scale(this.blockSize, this.blockSize, this.blockSize);
-    //   this.block.matrix.translate(x, 0, y);
-    //   this.block.render();
-    //   this.block.matrix.setIdentity();
+      // mouth
+      this.block.color = [0, 0.659, 0, 1];
+      this.block.matrix = stem;
+      this.block.matrix.scale(-this.blockSize * 10, -0.8, -this.blockSize * 10);
+      this.block.matrix.translate(
+        -this.blockSize - 0.35,
+        pY - 1,
+        this.blockSize + 0.4
+      );
+      this.block.render();
+      this.block.color = [1, 1, 1, 1];
+      this.block.matrix = stem;
+      this.block.matrix.translate(0.6, pY + 0.8, -1.05);
+      this.block.matrix.scale(
+        -this.blockSize * 0.8,
+        -0.8,
+        -this.blockSize * 3.7
+      );
+      this.block.render();
+      this.block.matrix.setIdentity();
+    } else if (type == -2) {
+      // Lucky Block
+      this.block.textureNum = 2;
+      this.block.matrix.translate(0, 5 * this.blockSize, 0);
+      this.block.matrix.scale(
+        -this.blockSize,
+        -this.blockSize,
+        -this.blockSize
+      );
+      this.block.matrix.translate(-x - 1, -1, -y + 1);
+      this.block.render();
+      this.block.matrix.setIdentity();
 
-    //   // top
-    //   this.block.color = [0.862, 0.557, 0.211, 1];
-    //   this.block.textureNum = -2;
-    //   this.block.matrix.translate(0, 6 * this.blockSize + 0.001, 0);
-    //   this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
-    //   this.block.matrix.translate(x, 0, y);
-    //   this.block.render();
-    //   this.block.matrix.setIdentity();
+      // top
+      this.block.color = [0.862, 0.557, 0.211, 1];
+      this.block.textureNum = -2;
+      this.block.matrix.translate(0, 6 * this.blockSize + 0.001, 0);
+      this.block.matrix.scale(-this.blockSize, -0.001, -this.blockSize);
+      this.block.matrix.translate(-x - 1, -1, -y + 1);
+      this.block.render();
+      this.block.matrix.setIdentity();
 
-    //   // bottom
-    //   this.block.matrix.translate(0, 4.999 * this.blockSize, 0);
-    //   this.block.matrix.scale(this.blockSize, 0.001, this.blockSize);
-    //   this.block.matrix.translate(x, 0, y);
-    //   this.block.render();
-    //   this.block.matrix.setIdentity();
-    // }
+      // bottom
+      this.block.matrix.translate(0, 4.999 * this.blockSize, 0);
+      this.block.matrix.scale(-this.blockSize, -0.001, -this.blockSize);
+      this.block.matrix.translate(-x - 1, -1, -y + 1);
+      this.block.render();
+      this.block.matrix.setIdentity();
+    }
   }
 
   addBlock() {

@@ -204,12 +204,25 @@ function renderScene() {
   // Pass the view matrix
   gl.uniformMatrix4fv(u_ViewMatrix, false, camera.viewMat.elements);
 
+  gl.uniform1i(u_lightOn, g_lightOn);
+  gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  gl.uniform3f(u_lightColor, g_lightColor[0], g_lightColor[1], g_lightColor[2]);
+
+  gl.uniform3f(u_cameraPos, camera.eye.x, camera.eye.y, camera.eye.z);
+
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+  // lights
+  let light = new Cube();
+  light.color = [2, 2, 0, 1];
+  light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  light.matrix.scale(-0.2, -0.2, -0.2);
+  light.render();
+
   map.render();
 
-  // backdrop
+  // skybox
   let sky = new Cube();
   sky.textureNum = 3;
   if (g_NormalOn) sky.textureNum = -3;
@@ -232,7 +245,7 @@ function renderScene() {
   sky.render();
   sky.matrix.setIdentity();
 
-  // world ground
+  // ground
   let ground = new Cube();
   if (g_NormalOn) ground.textureNum = -3;
   ground.color = [0.478, 0.741, 0.216, 1.0];
@@ -241,20 +254,7 @@ function renderScene() {
   ground.matrix.translate(0, 0, 0);
   ground.render();
 
-  gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  gl.uniform3f(u_lightColor, g_lightColor[0], g_lightColor[1], g_lightColor[2]);
-
-  gl.uniform3f(u_cameraPos, camera.eye.x, camera.eye.y, camera.eye.z);
-
-  gl.uniform1i(u_lightOn, g_lightOn);
-
-  let light = new Cube();
-  light.color = [2, 2, 0, 1];
-  light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  light.matrix.scale(-0.2, -0.2, -0.2);
-  light.render();
-
-  // Primitive Objects
+  // primitive objects
   let sphere = new Sphere();
   sphere.color = [0, 0, 0, 1];
   if (g_NormalOn) sphere.textureNum = -3;
@@ -310,23 +310,23 @@ function renderScene() {
     shell.matrix.setIdentity();
   }
 
-  // // princess peach
-  // let pY = 0.1 * Math.sin(4 * g_seconds) + 3.6;
-  // let princess = new Cube();
-  // princess.textureNum = 6;
-  // if (g_NormalOn) ground.textureNum = -3;
-  // princess.matrix.translate(0, pY, -0.44);
-  // princess.matrix.scale(0.5, 0.5, 0.001);
-  // princess.matrix.translate(8.2, 0, 0);
-  // princess.render();
-  // princess.matrix.setIdentity();
-  // princess.textureNum = -2;
-  // if (g_NormalOn) ground.textureNum = -3;
-  // princess.color = [0.635, 0.682, 0.996, 1.0];
-  // princess.matrix.translate(0, pY + 0.4, -0.439);
-  // princess.matrix.scale(0.5, 0.1, 0.002);
-  // princess.matrix.translate(8.2, 0, 0);
-  // princess.render();
+  // princess peach
+  let pY = 0.1 * Math.sin(4 * g_seconds) + 3.6;
+  let princess = new Cube();
+  princess.textureNum = 6;
+  if (g_NormalOn) princess.textureNum = -3;
+  princess.matrix.translate(0, pY + 0.5, -0.44);
+  princess.matrix.scale(-0.5, -0.5, 0.001);
+  princess.matrix.translate(-11.8, 0, 0);
+  princess.render();
+  princess.matrix.setIdentity();
+  princess.textureNum = -2;
+  if (g_NormalOn) ground.textureNum = -3;
+  princess.color = [0.635, 0.682, 0.996, 1.0];
+  princess.matrix.translate(0, pY + 0.9, -0.439);
+  princess.matrix.scale(-0.5, -0.1, 0.002);
+  princess.matrix.translate(-11.8, 3.2, 0);
+  princess.render();
 
   // Check the time at the end of the function, and display on web page
   var duration = performance.now() - startTime;
