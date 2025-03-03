@@ -38,7 +38,7 @@ function addActionsForHtmlUI() {
     .addEventListener("mousemove", function (ev) {
       if (ev.buttons == 1) {
         g_lightPos[0] = this.value / 100;
-        animateLight = false;
+        animateLights = false;
         renderScene();
       }
     });
@@ -48,7 +48,7 @@ function addActionsForHtmlUI() {
     .addEventListener("mousemove", function (ev) {
       if (ev.buttons == 1) {
         g_lightPos[1] = this.value / 100;
-        animateLight = false;
+        animateLights = false;
         renderScene();
       }
     });
@@ -58,7 +58,37 @@ function addActionsForHtmlUI() {
     .addEventListener("mousemove", function (ev) {
       if (ev.buttons == 1) {
         g_lightPos[2] = this.value / 100;
-        animateLight = false;
+        animateLights = false;
+        renderScene();
+      }
+    });
+
+  document
+    .getElementById("spotlightSliderX")
+    .addEventListener("mousemove", function (ev) {
+      if (ev.buttons == 1) {
+        g_spotlightPos[0] = this.value / 100;
+        animateLights = false;
+        renderScene();
+      }
+    });
+
+  document
+    .getElementById("spotlightSliderY")
+    .addEventListener("mousemove", function (ev) {
+      if (ev.buttons == 1) {
+        g_spotlightPos[1] = this.value / 100;
+        animateLights = false;
+        renderScene();
+      }
+    });
+
+  document
+    .getElementById("spotlightSliderZ")
+    .addEventListener("mousemove", function (ev) {
+      if (ev.buttons == 1) {
+        g_spotlightPos[2] = this.value / 100;
+        animateLights = false;
         renderScene();
       }
     });
@@ -130,7 +160,7 @@ function addActionsForHtmlUI() {
   document
     .getElementById("animate-light-button")
     .addEventListener("click", () => {
-      animateLight = true;
+      animateLights = true;
     });
 }
 

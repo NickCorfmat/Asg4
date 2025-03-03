@@ -40,6 +40,7 @@ var FSHADER_SOURCE = `
   varying vec4 v_VertPos;
   uniform bool u_lightOn;
   uniform bool u_spotlightOn;
+  uniform vec3 u_spotlightPos;
   uniform vec3 u_spotDirection;
   uniform float u_spotCosineCutoff;
   uniform float u_spotExponent;
@@ -74,6 +75,7 @@ var FSHADER_SOURCE = `
       baseColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
     }
 
+    // Light toggling feature derived from ChatGPT
     if (!u_lightOn) {
       gl_FragColor = baseColor;
       return;
@@ -97,16 +99,21 @@ var FSHADER_SOURCE = `
     vec3 pointDiffuse = baseColor.rgb * u_lightColor * nDotL * 0.7;
     vec3 pointAmbient = baseColor.rgb * u_lightColor * 0.5;
 
-    // Spotlight
+    // Spotlight - calculations derived from section 7.2.6 of https://math.hws.edu/graphicsbook/c7/s2.html
     vec3 spotDiffuse = vec3(0.0);
     float spotFactor = 0.0;
     if (u_spotlightOn) {
-      vec3 D = normalize(-u_spotDirection);
+      vec3 lightVector = u_spotlightPos - vec3(v_VertPos);
+      vec3 L = normalize(lightVector);
+  
+      vec3 D = normalize(-u_spotDirection); 
       float spotCosine = dot(D, L);
+  
       if (spotCosine >= u_spotCosineCutoff) {
         spotFactor = pow(spotCosine, u_spotExponent);
       }
-      spotDiffuse = baseColor.rgb * u_lightColor * nDotL * 0.7 * spotFactor;
+  
+      spotDiffuse = baseColor.rgb * u_lightColor * spotFactor * 1.7;
     }
 
     gl_FragColor = vec4(specular + pointDiffuse + pointAmbient + spotDiffuse, 1.0);
@@ -134,9 +141,14 @@ let u_lightColor;
 let u_cameraPos;
 let u_lightOn;
 let g_lightOn = true;
-let animateLight = true;
+let animateLights = true;
 let g_spotlightOn = true;
 let u_spotlightOn;
+let g_spotlightPos = [6, 3, 4.6];
+let u_spotlightPos;
+let u_spotCosineCutoff;
+let u_spotDirection;
+let u_spotExponent;
 
 // camera settings
 let camera = new Camera();
@@ -180,10 +192,16 @@ function tick() {
 }
 
 function updateAnimations() {
-  if (animateLight) {
+  if (animateLights) {
+    // Point light
     g_lightPos[0] = 3 * Math.cos(g_seconds / 2) + 5;
     g_lightPos[1] = 6;
     g_lightPos[2] = 3 * Math.sin(g_seconds / 2) + 5;
+
+    // Spotlight
+    g_spotlightPos[0] = 5;
+    g_spotlightPos[1] = Math.sin(g_seconds / 2) + 3;
+    g_spotlightPos[2] = 4.6;
   }
 }
 
@@ -229,7 +247,18 @@ function renderScene() {
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
   gl.uniform3f(u_lightColor, g_lightColor[0], g_lightColor[1], g_lightColor[2]);
 
+  let radians = 30 * (Math.PI / 180);
+
   gl.uniform1i(u_spotlightOn, g_spotlightOn);
+  gl.uniform3f(
+    u_spotlightPos,
+    g_spotlightPos[0],
+    g_spotlightPos[1],
+    g_spotlightPos[2]
+  );
+  gl.uniform3f(u_spotDirection, 0.0, -1.0, 0.0);
+  gl.uniform1f(u_spotCosineCutoff, Math.cos(radians));
+  gl.uniform1f(u_spotExponent, 90.0);
 
   gl.uniform3f(u_cameraPos, camera.eye.x, camera.eye.y, camera.eye.z);
 
@@ -237,11 +266,21 @@ function renderScene() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   // lights
-  let light = new Cube();
-  light.color = [2, 2, 0, 1];
-  light.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
-  light.matrix.scale(-0.2, -0.2, -0.2);
-  light.render();
+  let pointLight = new Cube();
+  pointLight.color = [2, 2, 0, 1];
+  pointLight.matrix.translate(g_lightPos[0], g_lightPos[1], g_lightPos[2]);
+  pointLight.matrix.scale(-0.2, -0.2, -0.2);
+  pointLight.render();
+
+  let spotlight = new Cube();
+  spotlight.color = [0.94, 0.2, 1, 1];
+  spotlight.matrix.translate(
+    g_spotlightPos[0],
+    g_spotlightPos[1],
+    g_spotlightPos[2]
+  );
+  spotlight.matrix.scale(-0.2, -0.2, -0.2);
+  spotlight.render();
 
   map.render();
 

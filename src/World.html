@@ -24,7 +24,7 @@ None
         <div class="settings">
           <h2>Settings</h2><br>
           <button id="play-button">Play Music</button>
-          <button id="animate-light-button">Animate Light</button>
+          <button id="animate-light-button">Animate Lights</button>
           <br>
         
           <div id="normal-buttons">
@@ -39,21 +39,26 @@ None
               <p><b>All Lights</b></p>
               <button id="light-on-button">On</button>
               <button id="light-off-button">Off</button>
+
+              <p>
+                Light X <input type="range" min="30" max="950" value="500" class="slider" id="lightSliderX"><br>
+                Light Y <input type="range" min="150" max="980" value="500" class="slider" id="lightSliderY"><br>
+                Light Z <input type="range" min="-50" max="940" value="500" class="slider" id="lightSliderZ"><br>
+              </p>
             </div>
             <div class="light-column">
               <p><b>Spot Light</b></p>
               <button id="spotlight-on-button">On</button>
               <button id="spotlight-off-button">Off</button>
+
+              <p>
+                Light X <input type="range" min="30" max="950" value="500" class="slider" id="spotlightSliderX"><br>
+                Light Y <input type="range" min="150" max="980" value="500" class="slider" id="spotlightSliderY"><br>
+                Light Z <input type="range" min="-50" max="940" value="500" class="slider" id="spotlightSliderZ"><br>
+              </p>
             </div>
           </div>
-
           <p>
-            Light X <input type="range" min="30" max="950" value="500" class="slider" id="lightSliderX"><br>
-            Light Y <input type="range" min="150" max="980" value="500" class="slider" id="lightSliderY"><br>
-            Light Z <input type="range" min="-50" max="940" value="500" class="slider" id="lightSliderZ"><br>
-
-            <br>
-
             Light Red <input type="range" min="0" max="255" value="255" class="slider" id="lightSliderRed"><br>
             Light Green <input type="range" min="0" max="255" value="255" class="slider" id="lightSliderGreen"><br>
             Light Blue <input type="range" min="0" max="255" value="255" class="slider" id="lightSliderBlue"><br>

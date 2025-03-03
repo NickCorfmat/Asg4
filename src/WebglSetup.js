@@ -73,6 +73,30 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_spotlightPos = gl.getUniformLocation(gl.program, "u_spotlightPos");
+  if (!u_spotlightPos) {
+    console.log("Failed to get the storage location of u_spotlightPos.");
+    return;
+  }
+
+  u_spotCosineCutoff = gl.getUniformLocation(gl.program, "u_spotCosineCutoff");
+  if (!u_spotCosineCutoff) {
+    console.log("Failed to get the storage location of u_spotCosineCutoff.");
+    return;
+  }
+
+  u_spotDirection = gl.getUniformLocation(gl.program, "u_spotDirection");
+  if (!u_spotDirection) {
+    console.log("Failed to get the storage location of u_spotDirection.");
+    return;
+  }
+
+  u_spotExponent = gl.getUniformLocation(gl.program, "u_spotExponent");
+  if (!u_spotExponent) {
+    console.log("Failed to get the storage location of u_spotExponent.");
+    return;
+  }
+
   u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
   if (!u_ModelMatrix) {
     console.log("Failed to get the storage location of u_ModelMatrix");

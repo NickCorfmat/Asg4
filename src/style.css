@@ -181,7 +181,7 @@ p {
 
 input[type="range"] {
     -webkit-appearance: none;
-    width: 200px;
+    width: 80%;
     height: 10px;
     background-color: rgb(116, 177, 108);
     border: 4px solid rgb(140, 224, 147);
