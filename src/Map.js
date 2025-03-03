@@ -50,6 +50,7 @@ class Map {
         if (stackHeight > 0) {
           for (let z = 0; z < stackHeight; z++) {
             this.block.textureNum = 0;
+            if (g_NormalOn) this.block.textureNum = -3;
             this.block.matrix.translate(0, z * this.blockSize, 0);
             this.block.matrix.scale(
               -this.blockSize,
@@ -72,6 +73,7 @@ class Map {
     if (type == -1) {
       // Pipe block
       this.block.textureNum = 1;
+      if (g_NormalOn) this.block.textureNum = -3;
       this.block.matrix.translate(0, 0, 0);
       this.block.matrix.scale(
         -this.blockSize,
@@ -86,6 +88,7 @@ class Map {
       // green top
       this.block.color = [0, 0.4, 0, 1];
       this.block.textureNum = -2;
+      if (g_NormalOn) this.block.textureNum = -3;
       this.block.matrix.translate(0, this.blockSize, 0);
       this.block.matrix.scale(-this.blockSize, -0.001, -this.blockSize);
       this.block.matrix.translate(-x - 1, -1, -y + 1);
@@ -100,6 +103,7 @@ class Map {
       let pZ = center.y - (3 * this.blockSize) / 8 - 0.09;
       let pY = 0.15 * Math.sin(g_seconds) + this.blockSize / 6 + 0.3;
       this.block.color = [1, 0.627, 0.267, 1];
+      if (g_NormalOn) this.block.textureNum = -3;
       this.block.matrix.translate(pX, pY, pZ);
       this.block.matrix.scale(
         -(this.blockSize / 4),
@@ -112,6 +116,7 @@ class Map {
 
       // mouth
       this.block.color = [0, 0.659, 0, 1];
+      if (g_NormalOn) this.block.textureNum = -3;
       this.block.matrix = stem;
       this.block.matrix.scale(-this.blockSize * 10, -0.8, -this.blockSize * 10);
       this.block.matrix.translate(
@@ -121,6 +126,7 @@ class Map {
       );
       this.block.render();
       this.block.color = [1, 1, 1, 1];
+      if (g_NormalOn) this.block.textureNum = -3;
       this.block.matrix = stem;
       this.block.matrix.translate(0.6, pY + 0.8, -1.05);
       this.block.matrix.scale(
@@ -133,6 +139,7 @@ class Map {
     } else if (type == -2) {
       // Lucky Block
       this.block.textureNum = 2;
+      if (g_NormalOn) this.block.textureNum = -3;
       this.block.matrix.translate(0, 5 * this.blockSize, 0);
       this.block.matrix.scale(
         -this.blockSize,
@@ -146,6 +153,7 @@ class Map {
       // top
       this.block.color = [0.862, 0.557, 0.211, 1];
       this.block.textureNum = -2;
+      if (g_NormalOn) this.block.textureNum = -3;
       this.block.matrix.translate(0, 6 * this.blockSize + 0.001, 0);
       this.block.matrix.scale(-this.blockSize, -0.001, -this.blockSize);
       this.block.matrix.translate(-x - 1, -1, -y + 1);

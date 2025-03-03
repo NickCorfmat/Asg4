@@ -270,11 +270,11 @@ function renderScene() {
 
   // ground
   let ground = new Cube();
-  if (g_NormalOn) ground.textureNum = -3;
   ground.color = [0.478, 0.741, 0.216, 1.0];
+  if (g_NormalOn) ground.textureNum = -3;
   ground.matrix.translate(0, -0.001, 9.5);
-  ground.matrix.scale(10, 0, 10);
-  ground.matrix.translate(0, 0, 0);
+  ground.matrix.scale(-10, -0.01, -10);
+  ground.matrix.translate(-1, 0, 1);
   ground.render();
 
   // primitive objects
@@ -295,7 +295,7 @@ function renderScene() {
   // goombas
   let goomba = new Cube();
   goomba.textureNum = 4;
-  if (g_NormalOn) ground.textureNum = -3;
+  if (g_NormalOn) goomba.textureNum = -3;
   for (let i = 0; i < 6; i++) {
     let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
     let gY = -1;
@@ -315,7 +315,7 @@ function renderScene() {
   // shells
   let shell = new Cube();
   shell.textureNum = 7;
-  if (g_NormalOn) ground.textureNum = -3;
+  if (g_NormalOn) shell.textureNum = -3;
   for (let i = 0; i < 6; i++) {
     let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
     let sY = -1;
@@ -343,7 +343,7 @@ function renderScene() {
   princess.render();
   princess.matrix.setIdentity();
   princess.textureNum = -2;
-  if (g_NormalOn) ground.textureNum = -3;
+  if (g_NormalOn) princess.textureNum = -3;
   princess.color = [0.635, 0.682, 0.996, 1.0];
   princess.matrix.translate(0, pY + 0.9, -0.439);
   princess.matrix.scale(-0.5, -0.1, 0.002);
