@@ -51,7 +51,7 @@ var FSHADER_SOURCE = `
     } else if (u_whichTexture == -2) {
       baseColor = u_FragColor;                   // Use Color
     } else if (u_whichTexture == -1) {
-      baseColor = vec4(v_UV, 1.0, 1.0);           // Use UV debug color
+      baseColor = vec4(v_UV, 1.0, 1.0);          // Use UV debug color
     } else if (u_whichTexture == 0) {
       baseColor = texture2D(u_Sampler0, v_UV);   // Use texture0
     } else if (u_whichTexture == 1) {
@@ -95,7 +95,7 @@ var FSHADER_SOURCE = `
 
     // Point light
     vec3 pointDiffuse = baseColor.rgb * u_lightColor * nDotL * 0.7;
-    vec3 pointAmbient = baseColor.rgb * u_lightColor * 0.3;
+    vec3 pointAmbient = baseColor.rgb * u_lightColor * 0.5;
 
     // Spotlight
     vec3 spotDiffuse = vec3(0.0);
