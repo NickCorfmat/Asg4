@@ -67,6 +67,12 @@ function connectVariablesToGLSL() {
     return;
   }
 
+  u_spotlightOn = gl.getUniformLocation(gl.program, "u_spotlightOn");
+  if (!u_spotlightOn) {
+    console.log("Failed to get the storage location of u_spotlightOn.");
+    return;
+  }
+
   u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
   if (!u_ModelMatrix) {
     console.log("Failed to get the storage location of u_ModelMatrix");

@@ -133,6 +133,13 @@ p {
     border: 6px solid rgb(255, 246, 162);
 }
 
+.light-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 #webgl {
     flex: 2;
     border: 10px solid black;

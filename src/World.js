@@ -39,6 +39,10 @@ var FSHADER_SOURCE = `
     uniform vec3 u_cameraPos;
     varying vec4 v_VertPos;
     uniform bool u_lightOn;
+    uniform bool u_spotlightOn;
+    uniform vec3 u_spotDirection;
+    uniform float u_spotCosineCutoff;
+    uniform float u_spotExponent;
     
     void main() {
       if (u_whichTexture == -3) {
@@ -85,11 +89,26 @@ var FSHADER_SOURCE = `
       // Specular
       float specular = pow(max(dot(E, R), 0.0), 10.0);
 
-      vec3 diffuse = vec3(gl_FragColor) * u_lightColor * nDotL * 0.7;
+      // Spotlight
+      float spotFactor = 1.0;
+      if (u_spotCosineCutoff > 0.0) { 
+        vec3 D = -normalize(u_spotDirection);
+        float spotCosine = dot(D, L);
+
+        if (spotCosine >= u_spotCosineCutoff) { 
+            spotFactor = pow(spotCosine, u_spotExponent);
+        } else {
+            spotFactor = 0.0;
+        }
+      }
+
+      vec3 diffuse = vec3(gl_FragColor) * u_lightColor * nDotL * 0.7 * spotFactor;
       vec3 ambient = vec3(gl_FragColor) * u_lightColor * 0.3;
 
       if (u_lightOn) {
         gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
+      } else if (u_spotlightOn) {
+      
       }
     }`;
 
@@ -116,6 +135,8 @@ let u_cameraPos;
 let u_lightOn;
 let g_lightOn = true;
 let animateLight = true;
+let g_spotlightOn = false;
+let u_spotlightOn;
 
 // camera settings
 let camera = new Camera();
@@ -208,6 +229,8 @@ function renderScene() {
   gl.uniform3f(u_lightPos, g_lightPos[0], g_lightPos[1], g_lightPos[2]);
   gl.uniform3f(u_lightColor, g_lightColor[0], g_lightColor[1], g_lightColor[2]);
 
+  gl.uniform1i(u_spotlightOn, g_spotlightOn);
+
   gl.uniform3f(u_cameraPos, camera.eye.x, camera.eye.y, camera.eye.z);
 
   // Clear <canvas>
@@ -258,14 +281,14 @@ function renderScene() {
   let sphere = new Sphere();
   sphere.color = [0, 0, 0, 1];
   if (g_NormalOn) sphere.textureNum = -3;
-  sphere.matrix.translate(4.6, 4.6, 3);
+  sphere.matrix.translate(4.8, 4.6, 3);
   sphere.matrix.scale(0.5, 0.5, 0.5);
   sphere.render();
 
   let cube = new Cube();
   cube.color = [0, 0, 1, 1];
   if (g_NormalOn) cube.textureNum = -3;
-  cube.matrix.translate(4.6, 4.4, 6);
+  cube.matrix.translate(5.8, 4.2, 3.6);
   cube.matrix.scale(0.8, 0.8, 0.8);
   cube.render();
 

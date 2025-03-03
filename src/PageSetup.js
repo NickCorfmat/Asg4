@@ -115,6 +115,19 @@ function addActionsForHtmlUI() {
   });
 
   document
+    .getElementById("spotlight-on-button")
+    .addEventListener("click", () => {
+      g_spotlightOn = true;
+      g_lightOn = true;
+    });
+
+  document
+    .getElementById("spotlight-off-button")
+    .addEventListener("click", () => {
+      g_spotlightOn = false;
+    });
+
+  document
     .getElementById("animate-light-button")
     .addEventListener("click", () => {
       animateLight = true;
