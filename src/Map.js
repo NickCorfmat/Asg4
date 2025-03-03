@@ -52,12 +52,12 @@ class Map {
             this.block.textureNum = 0;
             this.block.matrix.translate(0, z * this.blockSize, 0);
             this.block.matrix.scale(
-              this.blockSize,
-              this.blockSize,
-              this.blockSize
+              -this.blockSize,
+              -this.blockSize,
+              -this.blockSize
             );
 
-            this.block.matrix.translate(x, 0, y);
+            this.block.matrix.translate(-x - 1, -1, -y + 1);
             this.block.render();
             this.block.matrix.setIdentity();
           }

@@ -20,97 +20,97 @@ var VSHADER_SOURCE = `
 
 // Fragment shader program
 var FSHADER_SOURCE = `
-    precision mediump float;
-    varying vec2 v_UV;
-    varying vec3 v_Normal;
-    uniform vec4 u_FragColor;
-    uniform sampler2D u_Sampler0;
-    uniform sampler2D u_Sampler1;
-    uniform sampler2D u_Sampler2;
-    uniform sampler2D u_Sampler3;
-    uniform sampler2D u_Sampler4;
-    uniform sampler2D u_Sampler5;
-    uniform sampler2D u_Sampler6;
-    uniform sampler2D u_Sampler7;
-    uniform sampler2D u_Sampler8;
-    uniform int u_whichTexture;
-    uniform vec3 u_lightPos;
-    uniform vec3 u_lightColor;
-    uniform vec3 u_cameraPos;
-    varying vec4 v_VertPos;
-    uniform bool u_lightOn;
-    uniform bool u_spotlightOn;
-    uniform vec3 u_spotDirection;
-    uniform float u_spotCosineCutoff;
-    uniform float u_spotExponent;
-    
-    void main() {
-      if (u_whichTexture == -3) {
-        gl_FragColor = vec4((v_Normal + 1.0) / 2.0, 1.0); // Use normal diffuse
-      } else if (u_whichTexture == -2) {
-        gl_FragColor = u_FragColor;                   // Use Color
-      } else if (u_whichTexture == -1) {
-       gl_FragColor = vec4(v_UV, 1.0, 1.0);           // Use UV debug color
-      } else if (u_whichTexture == 0) {
-        gl_FragColor = texture2D(u_Sampler0, v_UV);   // Use texture0
-      } else if (u_whichTexture == 1) {
-        gl_FragColor = texture2D(u_Sampler1, v_UV);   // Use texture1
-      } else if (u_whichTexture == 2) {
-        gl_FragColor = texture2D(u_Sampler2, v_UV);   // Use texture2
-      } else if (u_whichTexture == 3) {
-        gl_FragColor = texture2D(u_Sampler3, v_UV);   // Use texture3
-      } else if (u_whichTexture == 4) {
-        gl_FragColor = texture2D(u_Sampler4, v_UV);   // Use texture4
-      } else if (u_whichTexture == 5) {
-        gl_FragColor = texture2D(u_Sampler5, v_UV);   // Use texture5
-      } else if (u_whichTexture == 6) {
-        gl_FragColor = texture2D(u_Sampler6, v_UV);   // Use texture6
-      } else if (u_whichTexture == 7) {
-        gl_FragColor = texture2D(u_Sampler7, v_UV);   // Use texture7
-      } else if (u_whichTexture == 8) {
-        gl_FragColor = texture2D(u_Sampler8, v_UV);   // Use texture8
-      } else {
-        gl_FragColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
+  precision mediump float;
+  varying vec2 v_UV;
+  varying vec3 v_Normal;
+  uniform vec4 u_FragColor;
+  uniform sampler2D u_Sampler0;
+  uniform sampler2D u_Sampler1;
+  uniform sampler2D u_Sampler2;
+  uniform sampler2D u_Sampler3;
+  uniform sampler2D u_Sampler4;
+  uniform sampler2D u_Sampler5;
+  uniform sampler2D u_Sampler6;
+  uniform sampler2D u_Sampler7;
+  uniform sampler2D u_Sampler8;
+  uniform int u_whichTexture;
+  uniform vec3 u_lightPos;
+  uniform vec3 u_lightColor;
+  uniform vec3 u_cameraPos;
+  varying vec4 v_VertPos;
+  uniform bool u_lightOn;
+  uniform bool u_spotlightOn;
+  uniform vec3 u_spotDirection;
+  uniform float u_spotCosineCutoff;
+  uniform float u_spotExponent;
+
+  void main() {
+    vec4 baseColor;
+    if (u_whichTexture == -3) {
+      baseColor = vec4((v_Normal + 1.0) / 2.0, 1.0); // Use normal diffuse
+    } else if (u_whichTexture == -2) {
+      baseColor = u_FragColor;                   // Use Color
+    } else if (u_whichTexture == -1) {
+      baseColor = vec4(v_UV, 1.0, 1.0);           // Use UV debug color
+    } else if (u_whichTexture == 0) {
+      baseColor = texture2D(u_Sampler0, v_UV);   // Use texture0
+    } else if (u_whichTexture == 1) {
+      baseColor = texture2D(u_Sampler1, v_UV);   // Use texture1
+    } else if (u_whichTexture == 2) {
+      baseColor = texture2D(u_Sampler2, v_UV);   // Use texture2
+    } else if (u_whichTexture == 3) {
+      baseColor = texture2D(u_Sampler3, v_UV);   // Use texture3
+    } else if (u_whichTexture == 4) {
+      baseColor = texture2D(u_Sampler4, v_UV);   // Use texture4
+    } else if (u_whichTexture == 5) {
+      baseColor = texture2D(u_Sampler5, v_UV);   // Use texture5
+    } else if (u_whichTexture == 6) {
+      baseColor = texture2D(u_Sampler6, v_UV);   // Use texture6
+    } else if (u_whichTexture == 7) {
+      baseColor = texture2D(u_Sampler7, v_UV);   // Use texture7
+    } else if (u_whichTexture == 8) {
+      baseColor = texture2D(u_Sampler8, v_UV);   // Use texture8
+    } else {
+      baseColor = vec4(1, 0.2, 0.2, 1);          // Error, put Redish
+    }
+
+    if (!u_lightOn) {
+      gl_FragColor = baseColor;
+      return;
+    }
+
+    vec3 lightVector = u_lightPos - vec3(v_VertPos);
+    vec3 L = normalize(lightVector);
+    vec3 N = normalize(v_Normal);
+    float nDotL = max(dot(N, L), 0.0);
+
+    // Reflection
+    vec3 R = reflect(-L, N);
+
+    // Eye
+    vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
+
+    // Specular
+    float specular = pow(max(dot(E, R), 0.0), 10.0);
+
+    // Point light
+    vec3 pointDiffuse = baseColor.rgb * u_lightColor * nDotL * 0.7;
+    vec3 pointAmbient = baseColor.rgb * u_lightColor * 0.3;
+
+    // Spotlight
+    vec3 spotDiffuse = vec3(0.0);
+    float spotFactor = 0.0;
+    if (u_spotlightOn) {
+      vec3 D = normalize(-u_spotDirection);
+      float spotCosine = dot(D, L);
+      if (spotCosine >= u_spotCosineCutoff) {
+        spotFactor = pow(spotCosine, u_spotExponent);
       }
+      spotDiffuse = baseColor.rgb * u_lightColor * nDotL * 0.7 * spotFactor;
+    }
 
-      vec3 lightVector = u_lightPos - vec3(v_VertPos);
-      float r = length(lightVector);
-
-      vec3 L = normalize(lightVector);
-      vec3 N = normalize(v_Normal);
-      float nDotL = max(dot(N, L), 0.0);
-
-      // Reflection
-      vec3 R = reflect(-L, N);
-
-      // Eye
-      vec3 E = normalize(u_cameraPos - vec3(v_VertPos));
-
-      // Specular
-      float specular = pow(max(dot(E, R), 0.0), 10.0);
-
-      // Spotlight
-      float spotFactor = 1.0;
-      if (u_spotCosineCutoff > 0.0) { 
-        vec3 D = -normalize(u_spotDirection);
-        float spotCosine = dot(D, L);
-
-        if (spotCosine >= u_spotCosineCutoff) { 
-            spotFactor = pow(spotCosine, u_spotExponent);
-        } else {
-            spotFactor = 0.0;
-        }
-      }
-
-      vec3 diffuse = vec3(gl_FragColor) * u_lightColor * nDotL * 0.7 * spotFactor;
-      vec3 ambient = vec3(gl_FragColor) * u_lightColor * 0.3;
-
-      if (u_lightOn) {
-        gl_FragColor = vec4(specular + diffuse + ambient, 1.0);
-      } else if (u_spotlightOn) {
-      
-      }
-    }`;
+    gl_FragColor = vec4(specular + pointDiffuse + pointAmbient + spotDiffuse, 1.0);
+  }`;
 
 // Global Variables
 let canvas;
@@ -135,7 +135,7 @@ let u_cameraPos;
 let u_lightOn;
 let g_lightOn = true;
 let animateLight = true;
-let g_spotlightOn = false;
+let g_spotlightOn = true;
 let u_spotlightOn;
 
 // camera settings
@@ -298,17 +298,16 @@ function renderScene() {
   if (g_NormalOn) ground.textureNum = -3;
   for (let i = 0; i < 6; i++) {
     let gX = 20 * Math.cos(0.25 * g_seconds) + 20;
-    let gY = 0;
+    let gY = -1;
     let gZ = i * 1500 + 10;
 
-    goomba.matrix.scale(0.27, 0.27, 0.001);
+    goomba.matrix.scale(0.27, -0.27, 0.001);
     if (i % 2 == 0) {
       gX = 20 * Math.sin(0.25 * g_seconds) + 20;
       goomba.matrix.translate(gX, gY, gZ);
     } else {
       goomba.matrix.translate(gX, gY, gZ);
     }
-    //goomba.normalMatrix.setInverseOf(goomba.matrix).transpose();
     goomba.render();
     goomba.matrix.setIdentity();
   }
@@ -319,10 +318,10 @@ function renderScene() {
   if (g_NormalOn) ground.textureNum = -3;
   for (let i = 0; i < 6; i++) {
     let sX = 20 * Math.sin(0.3 * -g_seconds) + 20;
-    let sY = 0;
+    let sY = -1;
     let sZ = i * 1500 + 5;
 
-    shell.matrix.scale(0.27, 0.27, 0.001);
+    shell.matrix.scale(0.27, -0.27, 0.001);
     if (i % 2 == 0) {
       sX = 20 * Math.cos(0.3 * g_seconds) + 20;
       shell.matrix.translate(sX, sY, sZ);
